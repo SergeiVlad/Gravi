@@ -15,12 +15,19 @@ def scan(fname):
 		freq - show record frequency of the data
 		sep - separator. Defautl separator is \\t
 		hex - if hexadecimal numbers are present in data
+		types - list of the each rows types
 	"""
 
 	# initialisation D:
-	D = {'read':False, 'col':0, 'row':0, 
-		'nhead':0, 'coleq':1, 'tact_fq':1, 
-		'sep':'\\t', 'hex':False, 'types':[]}
+	D = {'read':False, 
+		'col':0, 
+		'row':0,
+		'nhead':0, 
+		'coleq':1, 
+		'tact_fq':1, 
+		'sep':'\\t', 
+		'hex':False,
+		'types':[]}
 	ine_str = None
 	ind = None 
 	ind_prew = None

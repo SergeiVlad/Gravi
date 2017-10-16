@@ -9,6 +9,7 @@ def read(D):
 	else:
 
 		print('Ne Ok')
+		print('another print')
 	
 
 
