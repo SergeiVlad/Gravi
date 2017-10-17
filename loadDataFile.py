@@ -6,15 +6,15 @@ import scanFile
 
 # fname = ofd.fopen('I:/PROGS/Python/work/Gravi/test.txt')
 # fname = ofd.fopen('I:/PROGS/Python/work/Gravi/test.txt')
-fname = ofd.fopen('/media/segrii/Transcend/PROGS/Python/work/Gravi/test.txt')
-
+fname = ofd.fopen('I:/PROGS/Python/work/Gravi/test2.txt')
+# fname = ofd.fopen('/media/segrii/Transcend/PROGS/Python/work/Gravi/test.txt')
 
 
 if type(fname) == str:
 
 	sPath, sFile  = os.path.split(fname)
 
-	D,s,ind,ind_prew = scanFile.scan(fname)
+	D = scanFile.scan(fname)
 
 	for i in D.keys():
 		print(i,':',D[i])

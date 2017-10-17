@@ -109,7 +109,7 @@ def scan(fname):
 		D['col'] = len(type_lst)
 		D['types'] = type_lst
 
-	return D,line_str,ind,ind_prew
+	return D
 
 
 def types_recognize(line):
@@ -143,4 +143,4 @@ def types_recognize(line):
 
 if __name__ == '__main__':
 
-	scan('')
+	D  = scan('I:/PROGS/Python/work/Gravi/test2.txt')
