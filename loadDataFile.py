@@ -19,5 +19,3 @@ if type(fname) == str:
 	for i in D.keys():
 		print(i,':',D[i])
 
-
-# KKKK1111a
