@@ -14,7 +14,7 @@ def scan(fname):
 		coleq - show equal or not all strings, if coleq = true it mean that all strings are equal in the another case there are two type strings in data file: total and tact strings.
 		tactf - show how many times occurs such string in relate to the total string. For example tactf = 200 mean that each 200th string will be a total. tact_col > 1 
 		freq - show record frequency of the data
-		sep - separator. Defautl separator is \\t
+		sep - separator. Defautl separator jis \\t
 		hex - if hexadecimal numbers are present in data
 		types - list of the each rows types
 	"""
@@ -23,116 +23,108 @@ def scan(fname):
 		'col':0, 
 		'row':0,
 		'nhead':0, 
-		'coleq':1, 
+		'coleq':True, 
 		'tact_fq':1, 
 		'sep':'\\t', 
 		'hex':False,
 		'types':[]}
-	ine_str = None
-	ind = None 
-	ind_prew = None
 
 	# Raw count
+	# --------------------------------------------------
+	min_raw = 2 	# minimal number of lines in the file
+	min_head = 5	# set minimal count for lines
+
 	with open(fname) as f:
 	    D['raw'] = sum(1 for _ in f)
-	    
-	if D['row'] < 5:
-		break
+
+	if D['row'] <= min_raw: 
+		return D
+	elif D['raw'] <= min_head: 
+		nCount = D['raw']-1  
+	else:
+		nCount = 5
 
 	# Head recognize
+	# --------------------------------------------------
 	with open(fname) as f:
-		# init firs line parameters
-		line_str = f.readline()
-		types_list = types_recognize(line_str)
-		types_calc = calc_type_list(types_list)
+
+		# analyze first line
+		types_calc = analyze_line_types(f.readline())
 		if types_calc['str'] > 0:
-			# check next lines:
-
-			line_str = f.readline()
-			types_list = types_recognize(line_str)
-			types_calc = calc_type_list(types_list)
-
-
-
-
-	# Head & hex recognize 
-	with open(fname, 'r') as f:
-		line_str = f.readline()
-		if line_str:
-			D['read'] = True
-		try: 
-			pdb.set_trace()
-			types_list = types_recognize(line_str)
-			types_calc = calc_type_list(types_list)
-			num = len(np.array(line_str.split(),'float'))
-			D['col'] = num
-		except:
-			# head identation:
-			D['nhead'] = 1
-			for i in range(5):
-				try:
-					line_str = f.readline()
-					line_lst = line_str.split()
-					np_arr = np.array(line_lst,'float')
-					break
-				except:
+			D['nhead'] += 1
+			# analyze next nCount lines:
+			for i in range(nCount):
+				types_calc = analyze_line_types(f.readline())
+				if types_calc['str'] > 0:
 					D['nhead'] += 1
-			# another head identation for hexadecimal numbers in rows:
-			if D['nhead'] >= 5:
-				f.seek(0,0)
-				D['nhead'] = 0
-				# First attempt to find hexadecimal numbers in first row
-				line_str = f.readline()
-				line_lst = line_lst.split()
-				line_arr = []
-				for i in range(len(line_lst)):
-					try:
-						line_arr.append(int(line_lst[i],16))
-					except ValueError:
-						line_arr.append('')
-				if any(line_arr): # if first attempt is successful search will end
-					D['nhead'] = 0
-					D['hex'] = True
-					ind_prew = next(i for i,j in enumerate(line_arr) if j)
-				else: # find another strings with hexadecimal elements
-					D['nhead'] = 1 
-					for i in range(9):
-						# in this loop we try to get hex numbers from string parts
-						# if str part is not hex element it = '', else element = int number 
-						try:
-							line_str = f.readline()
-							line_lst = line_lst.split()
-							line_arr = []
-							for j in range(len(line_lst)):
-								try: line_arr.append(int(line_lst[i],16))
-								except ValueError: 	line_arr.append('')
-						except: # break cycle 'for' if can't recognize string parts
-							D['read'] = False
-							break
-						# check results of hexadecimal scaning in line_arr by two criteries
-						# 1) if any in array is non empty
-						# 2) if nonepty element inex is equal to previous el index
-						try: ind = next(i for i,j in enumerate(line_arr) if j)
-						except: ind = ''
-						if (not not ind) & (ind == ind_prew):
-							D['hex'] = True
-						elif (not ind):
-							D['nhead'] += 1
-							D['hex'] = False
-							break
-			# head number check:
-			if D['nhead'] >=5:
-				D['read'] = False
+	if D['row'] == D['nhead']:
+		return D
+	else:
+		D['read'] = True
 
-	# Column recoqnize
+
+	# Hexadecimal recognize 
+	# --------------------------------------------------
 	with open(fname, 'r') as f:
+
+		# skip head lines if it exist in file: 
 		for i in range(D['nhead']):
-			line_str = f.readline()
+			f.readline()
+
+		types_calc = analyze_line_types(f.readline())
+		if types_calc['hex'] > 0:
+			D['hex'] = True
+
+
+	# Columns recognize
+	# --------------------------------------------------
+	with open(fname, 'r') as f:
+
+		# skip head lines if it exist in file: 
+		for i in range(D['nhead']):
+			f.readline()
 			
 		line_str = f.readline()
-		type_lst = types_recognize(line_str)
-		D['col'] = len(type_lst)
-		D['types'] = type_lst
+		types_lst = types_recognize(line_str)
+		D['col'] = len(types_lst)
+		D['types'] = types_lst
+
+	# Ecuality in nQ columns recognize
+	# --------------------------------------------------
+	nQ = 1000
+
+	if D['row'] > nQ + D['nhead']:
+
+		with open(fname, 'r') as f:
+
+			# skip head lines if it exist in file: 
+			for i in range(D['nhead']):
+				f.readline()
+
+			# find unequality between data rows
+			n_uneq_lines = 0
+			ls_uneq = list()
+			ls_uneq.append(D['col'])
+
+			for i in range(nQ):
+				types_lst = types_recognize(f.readline())
+				if len(types_lst) != D['col']:
+					D['coleq'] = False
+					n_uneq_lines += 1
+					ls_uneq.append(len(types_lst))
+
+			if n_uneq_lines > 0:
+				D['col'] = list(set(ls_uneq))
+				
+	# frequency recognize
+	# --------------------------------------------------
+	if D['coleq'] == False:
+		if n_uneq_lines > 4 & n_uneq_lines <= 6:
+			D['takt_fq'] = 200
+		if n_uneq_lines == 1 or n_uneq_lines == 2:
+			D['takt_fq'] = 800
+	else:
+		D['coleq'] = 1
 
 	return D
 
@@ -194,7 +186,20 @@ def calc_type_list(types_list):
 
 	return type_calc	
 
+def analyze_line_types(line):
+
+	# analyze_types function get data line and return dict with types guantity
+
+	types_list = types_recognize(line)
+	types_count = calc_type_list(types_list)
+
+	return types_count
+
 
 if __name__ == '__main__':
 
-	D  = scan('I:/PROGS/Python/work/Gravi/test2.txt')
+	# D  = scan('I:/PROGS/Python/work/Gravi/test2.txt')
+	D  = scan('/media/segrii/Transcend/PROGS/Python/work/Gravi/test2.txt')
+
+
+
