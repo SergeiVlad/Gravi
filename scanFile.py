@@ -1,5 +1,6 @@
 """ Determine the type of data file for choose head string and features for read """
 import numpy as np
+import pdb
 
 
 def scan(fname):
@@ -17,7 +18,6 @@ def scan(fname):
 		hex - if hexadecimal numbers are present in data
 		types - list of the each rows types
 	"""
-
 	# initialisation D:
 	D = {'read':False, 
 		'col':0, 
@@ -32,13 +32,38 @@ def scan(fname):
 	ind = None 
 	ind_prew = None
 
-	# Head & hex recognize 
+	# Raw count
+	with open(fname) as f:
+	    D['raw'] = sum(1 for _ in f)
+	    
+	if D['row'] < 5:
+		break
 
+	# Head recognize
+	with open(fname) as f:
+		# init firs line parameters
+		line_str = f.readline()
+		types_list = types_recognize(line_str)
+		types_calc = calc_type_list(types_list)
+		if types_calc['str'] > 0:
+			# check next lines:
+
+			line_str = f.readline()
+			types_list = types_recognize(line_str)
+			types_calc = calc_type_list(types_list)
+
+
+
+
+	# Head & hex recognize 
 	with open(fname, 'r') as f:
 		line_str = f.readline()
 		if line_str:
 			D['read'] = True
 		try: 
+			pdb.set_trace()
+			types_list = types_recognize(line_str)
+			types_calc = calc_type_list(types_list)
 			num = len(np.array(line_str.split(),'float'))
 			D['col'] = num
 		except:
@@ -138,7 +163,36 @@ def types_recognize(line):
 					else: types_list.append('')
 
 	return types_list
-		
+
+
+def calc_type_list(types_list):
+
+	# calc_type_list - return dictionary with result of calculate each type of data from type_list
+
+	# initialisation type_calc:
+	type_calc = {'str':0, 'int':0, 'float':0, 'hex':0}
+
+	if any(x == 'str' for x in types_list):
+		for i in range(len(types_list)):
+			if types_list[i] == 'str':
+				type_calc['str'] += 1
+
+	if any(x == 'int' for x in types_list):
+		for i in range(len(types_list)):
+			if types_list[i] == 'int':
+				type_calc['int'] += 1
+
+	if any(x == 'float' for x in types_list):
+		for i in range(len(types_list)):
+			if types_list[i] == '':
+				type_calc['float'] += 1
+
+	if any(x == 'hex' for x in types_list):
+		for i in range(len(types_list)):
+			if types_list[i] == 'hex':
+				type_calc['hex'] += 1
+
+	return type_calc	
 
 
 if __name__ == '__main__':
