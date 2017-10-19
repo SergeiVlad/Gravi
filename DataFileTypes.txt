@@ -1,0 +1,18 @@
+single_LG
+-------------------
+F = {1: "Second", 2: "Gx"}
+Gx: SF = 1
+
+single_AK_t
+-------------------
+F = {1: "Termo", 2: "Ax"}
+Gx: SF = 20, b0 = 0, info = "Accelerometer signal"
+Termo: info = "Temperature sensor signal"
+
+grom_TM01  on 
+-------------------
+F = {1: "Second", 2: "Gx", 3: "Gy", 4: "Gz", 5: "Ax", 6: "Ay", 7: "Az"}
+
+grom_TM02  off
+-------------------
+F = {1: "Second", 2: "Gx", 3: "Gy", 4: "Gz", 5: "Ax", 6: "Ay", 7: "Az"}
