@@ -4,9 +4,9 @@ import os
 import scanFile
 
 
+fname = ofd.fopen('E:/ИСПЫТАНИЯ/УКННС/termo/20_m20_p85/')
 # fname = ofd.fopen('I:/PROGS/Python/work/Gravi/test.txt')
-# fname = ofd.fopen('I:/PROGS/Python/work/Gravi/test.txt')
-fname = ofd.fopen('I:/PROGS/Python/work/Gravi/test2.txt')
+# fname = ofd.fopen('I:/PROGS/Python/work/Gravi/test2.txt')
 # fname = ofd.fopen('/media/segrii/Transcend/PROGS/Python/work/Gravi/test.txt')
 
 

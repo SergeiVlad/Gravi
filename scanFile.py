@@ -24,30 +24,29 @@ def scan(fname):
 		'row':0,
 		'nhead':0, 
 		'coleq':True, 
-		'tact_fq':1, 
+		'tact_fq':0, 
 		'sep':'\\t', 
 		'hex':False,
-		'types':[]}
+		'types':list()}
 
-	# Raw count
+	# Row count
 	# --------------------------------------------------
-	min_raw = 2 	# minimal number of lines in the file
+	min_row = 2 	# minimal number of lines in the file
 	min_head = 5	# set minimal count for lines
 
 	with open(fname) as f:
-	    D['raw'] = sum(1 for _ in f)
+	    D['row'] = sum(1 for _ in f)
 
-	if D['row'] <= min_raw: 
+	if D['row'] <= min_row: 
 		return D
-	elif D['raw'] <= min_head: 
-		nCount = D['raw']-1  
+	elif D['row'] <= min_head: 
+		nCount = D['row']-1  
 	else:
 		nCount = 5
 
 	# Head recognize
 	# --------------------------------------------------
 	with open(fname) as f:
-
 		# analyze first line
 		types_calc = analyze_line_types(f.readline())
 		if types_calc['str'] > 0:
@@ -104,6 +103,7 @@ def scan(fname):
 			# find unequality between data rows
 			n_uneq_lines = 0
 			ls_uneq = list()
+			uqD = {str(D['col']):D['types']}
 			ls_uneq.append(D['col'])
 
 			for i in range(nQ):
@@ -112,19 +112,22 @@ def scan(fname):
 					D['coleq'] = False
 					n_uneq_lines += 1
 					ls_uneq.append(len(types_lst))
+					uqD[str(len(types_lst))] = types_lst
 
 			if n_uneq_lines > 0:
 				D['col'] = list(set(ls_uneq))
-				
+				D['types'] = uqD
+
+
 	# frequency recognize
 	# --------------------------------------------------
 	if D['coleq'] == False:
 		if n_uneq_lines > 4 & n_uneq_lines <= 6:
-			D['takt_fq'] = 200
+			D['tact_fq'] = 200
 		if n_uneq_lines == 1 or n_uneq_lines == 2:
-			D['takt_fq'] = 800
+			D['tact_fq'] = 800
 	else:
-		D['coleq'] = 1
+		D['coleq'] = True
 
 	return D
 
@@ -196,10 +199,9 @@ def analyze_line_types(line):
 	return types_count
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
 
-	# D  = scan('I:/PROGS/Python/work/Gravi/test2.txt')
-	D  = scan('/media/segrii/Transcend/PROGS/Python/work/Gravi/test2.txt')
-
-
-
+	# D  = scan('I:/PROGS/Python/work/Gravi/test5.txt')
+	# D  = scan('/media/segrii/Transcend/PROGS/Python/work/Gravi/test3.txt')
+	# for i in D.keys():
+	# 	print(i,':',D[i])
