@@ -1,17 +1,17 @@
 """ readDataFile module read data after scaning file by scanFile module """
+import re
 
 def read(D):
 
 	if type(D) == dict:
-
-		print('OK')
-
-	else:
-
-		print('Ne Ok')
-		print('another print')
-	
+		data_name_list = scanDataFileTypes(D['types'])
 
 
+def scanDataFileTypes():
 
-	return('Ok1')
+	data_name_list = list()
+	with open('DataFileTypes.txt','r') as f:
+		# find 
+		s = f.readline()
+
+	return data_name_list

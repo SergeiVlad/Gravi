@@ -1,7 +1,5 @@
 """ Determine the type of data file for choose head string and features for read """
-import numpy as np
 import pdb
-
 
 def scan(fname):
 
@@ -19,7 +17,8 @@ def scan(fname):
 		types - list of the each rows types
 	"""
 	# initialisation D:
-	D = {'read':False, 
+	D = {'filename':'',
+		'read':False, 
 		'col':0, 
 		'row':0,
 		'nhead':0, 
@@ -28,6 +27,8 @@ def scan(fname):
 		'sep':'\\t', 
 		'hex':False,
 		'types':list()}
+
+	D['filename'] = fname
 
 	# Row count
 	# --------------------------------------------------

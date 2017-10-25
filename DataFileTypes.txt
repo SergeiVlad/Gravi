@@ -16,3 +16,4 @@ F = {1: "Second", 2: "Gx", 3: "Gy", 4: "Gz", 5: "Ax", 6: "Ay", 7: "Az"}
 grom_TM02  off
 -------------------
 F = {1: "Second", 2: "Gx", 3: "Gy", 4: "Gz", 5: "Ax", 6: "Ay", 7: "Az"}
+All: SF = 4
