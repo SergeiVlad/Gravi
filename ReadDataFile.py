@@ -12,10 +12,15 @@ def read(format_file):
 	Returns:
 		data: Dictionary with data vectors
 	"""
-	if type(format_file) != dict:
-		return []
+	if type(format_file) != dict: return []
+	# get names of the data fields:
+	data_names,data_parameters,format_name = scanDataFileTypes(format_file['types'])
+	if not data_names: return []
+	# add new keys: to the format_file dictionary:
+	format_file['names'] = data_names
+	format_file['parameters'] = data_parameters
+	format_file['format'] = format_name
 
-	data_list = scanDataFileTypes(format_file['types'])
 
 
 def scanDataFileTypes(types_list):
@@ -24,29 +29,60 @@ def scanDataFileTypes(types_list):
 	Args:
 		types_list: List with names of types of the data
 	Returns:
-		data_name_lits: List with names of data vectors
+		data_names: List with names of data fields
+		data_parameters: Dictionary where keys = data_names, and items = dictionary with standart structure
+		format_name: name of the defined format current data file
 	"""
 
-	data_name_list = list()
-	find_type_res = list()
-	with open('DataFileTypes.txt','r') as f:
+	data_names = list()
+	data_parameters = None
+	data_parameters_template = {'SF':1, 'b0':0}
+	format_name = 'undefined'
+	storage = 'DataFileTypes.txt'
+
+	# find appropriate with current format strings in file and then 
+	# search around this strings name and options of this  format
+	
+	# get data_names:
+	# ---------------------
+	with open(storage,'r') as f:
+		ind = 0
 		for line in f:
+			ind += 1
 			if re.search('F\s*=\s*\{', line):
 				names = re.findall('\"([^\"]+)\"', line)
 				if len(names) == len(types_list):
-					find_type_res.append(line)
-	ind = 0 # index for chose format type in find_type_res list
-	if not find_type_res:
-		print('Find 0 access types. Data structure builded without defined names.')
-		return None
-	elif len(find_type_res)>1:
-		print('Find',len(find_type_res),'types of formats.')
-		print('Need to resolve problem of chose from find formats.')
-		return None
-	print('data_name_list defined.')
-	data_name_list = find_type_res[ind]
-	return data_name_list
+					data_names = names
+					ind = ind-3
+					break
+	if not data_names:
+		j = 0
+		for i in types_list:
+			j += 1
+			data_names.append('Var'+str(j)+'_'+i)
+	# build data_parameters
+	# ---------------------
+	data_parameters = dict.fromkeys(data_names)
+	for i in data_parameters.keys():
+		data_parameters[i] = data_parameters_template
+	# get  format name
+	# ---------------------
+	with open(storage,'r') as f:
+		for i, line in enumerate(f):
+			if i == ind:
+				s = re.search('\w+', line)
+				format_name = s.group()
+				# get all defined options for this format
+				options_list = list()
+				line = f.readline()
+				while line:
+					print(f.readline())
+					options_list.append(line)
+				break
 
+
+
+	return data_names, data_parameters, format_name
 
 
 def recognize(format_file):
@@ -58,7 +94,7 @@ def recognize(format_file):
 	DataList = ''
 
 	# recognizing existing data type
-	d# ------------------------------------------------------
+	# ------------------------------------------------------
 	ls = ['int', 'int', 'float', 'float', 'float', 'float', 'float', 'float', 'int']
 	if format_file['types'] == ls:
 		data_name = 'grom_TM01'

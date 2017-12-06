@@ -9,5 +9,5 @@ class Test_LoadDataFile(unittest.TestCase):
 	# 	tt = LoadDataFile('/home/segrii/dev/Gravi/')
 
 if __name__ == '__main__':
-	tt = LoadDataFile('/home/segrii/dev/Gravi/test1.txt')
+	tt = LoadDataFile('/home/segrii/dev/Gravi/test2.txt')
 	# unittest.main(exit = False)
