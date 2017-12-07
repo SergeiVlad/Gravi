@@ -53,7 +53,6 @@ def scanDataFileTypes(types_list):
 				names = re.findall('\"([^\"]+)\"', line)
 				if len(names) == len(types_list):
 					data_names = names
-					ind = ind-3
 					break
 	if not data_names:
 		j = 0
@@ -65,38 +64,50 @@ def scanDataFileTypes(types_list):
 	data_parameters = dict.fromkeys(data_names)
 	for i in data_parameters.keys():
 		data_parameters[i] = data_parameters_template
+
 	# get  format name
 	# ---------------------
 	with open(storage,'r') as f:
 		for i, line in enumerate(f):
-			if i == ind:
+			if i == ind-3:
 				s = re.search('\w+', line)
 				format_name = s.group()
-				# get all defined options for this format
-				options_list = list()
-				line = f.readline()
-				while line:
-					print(f.readline())
-					options_list.append(line)
 				break
-
-
+	# get all defined options for this format
+		options_strings = list()
+		s = f.readline()
+		while s:
+			options_strings.append(s)
+			s = f.readline()
+	data_parameters = processing_option_strings(data_parameters, options_strings)
 
 	return data_names, data_parameters, format_name
 
+def processing_option_strings(data_parameters, options_strings):
+	""" Recognize options for each data fields from otion_strings list
 
-def recognize(format_file):
-
-	""" Recognize current data file by dictionary D that return from scanFile
-		Return list with field names of the data in current file 
+	Args:
+		data_parameters: data_parameters dictionary where each field have data name and it options
+		options_strings: list with string from file which contand options information
+	Returns:
+		data_parameters: with uprade options for each data field
 	"""
 
-	DataList = ''
+	# find the begin of the options:
+	i = 0
+	for line in options_strings:
+		i += 1
+		if re.search('^---', line):
+			opts = options_strings[i+1:]
+			break
+	for line in opts:
+		# scan for All
+		if re.search('All\s*:', line):
+			if re.search('All\s*:\s*(\w+)\s*=\s*-?\d',line):
+				opt_names = re.findall('[:,]\s+(\w+)\s*=',line)
+				opt_values = re.findall('[:,]\s+\w+\s*=\s*(-?\d+)',line)
+		print(opt_names)
+		print(opt_values)
 
-	# recognizing existing data type
-	# ------------------------------------------------------
-	ls = ['int', 'int', 'float', 'float', 'float', 'float', 'float', 'float', 'int']
-	if format_file['types'] == ls:
-		data_name = 'grom_TM01'
-	return DataList
 
+	return data_parameters
