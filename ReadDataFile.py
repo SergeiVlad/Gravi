@@ -63,14 +63,14 @@ def scanDataFileTypes(types_list):
 	# ---------------------
 	data_parameters = dict.fromkeys(data_names)
 	for i in data_parameters.keys():
-		data_parameters[i] = data_parameters_template
+		data_parameters[i] = data_parameters_template.copy()
 
 	# get  format name
 	# ---------------------
 	with open(storage,'r') as f:
 		for i, line in enumerate(f):
 			if i == ind-3:
-				s = re.search('\w+', line)
+				s = re.search('.+', line)
 				format_name = s.group()
 				break
 	# get all defined options for this format
@@ -105,9 +105,22 @@ def processing_option_strings(data_parameters, options_strings):
 		if re.search('All\s*:', line):
 			if re.search('All\s*:\s*(\w+)\s*=\s*-?\d',line):
 				opt_names = re.findall('[:,]\s+(\w+)\s*=',line)
-				opt_values = re.findall('[:,]\s+\w+\s*=\s*(-?\d+)',line)
-		print(opt_names)
-		print(opt_values)
-
-
+				opt_values = re.findall('[:,]\s+\w+\s*=\s*([-+]?[0-9]*\.?[0-9]*)',line)
+			dp = data_parameters.keys()
+			if opt_names and opt_values:
+				for i in range(len(opt_values)):
+					for j in range(len(dp)):
+						data_parameters[list(data_parameters.keys())[j]][opt_names[i]] = float(opt_values[i])
+		# scan for one
+		if not re.search('All\s*:', line):
+			sign = re.findall('([A-z,0-9]+)\s*:',line)[0]
+			opt_names = re.findall('[:,]\s+(\w+)\s*=',line)
+			opt_values = re.findall('[:,]\s+\w+\s*=\s*([-+]?[0-9]*\.?[0-9]*)',line)
+			dp = list(data_parameters.keys())
+			if opt_names and opt_values:
+				for i in range(len(opt_values)):
+					for j in range(len(dp)):
+						if dp[j] == sign:
+							data_parameters[dp[j]][opt_names[i]] = float(opt_values[i])
+			# import pdb; pdb.set_trace()
 	return data_parameters

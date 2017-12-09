@@ -21,7 +21,7 @@ All: SF = 4
 Hartron type 9 columns
 -------------------
 F = {1: "Second", 2: "Tact", 3: "Gx", 4: "Gy", 5: "Gz", 6: "Ax", 7: "Ay", 8: "Az", 9: "SS"}
-All: SF = 1
+All: SF = 4
 
 Hartron type 9 columns another
 -------------------
@@ -36,4 +36,6 @@ All: SF = 4
 Hartron type 10 columns
 -------------------
 F = {1: "Second", 2: "Tt", 3: "Gx", 4: "Gy", 5: "Gz", 6: "Ax", 7: "Ay", 8: "Az", 9: "SS", 10: "termo"}
-All: SF = 1
+All: SF = 111.11, b0 = -14, bibi = 0.223
+Second: SF = 77777, b0 = 0.111, b3 = 55
+All: SF = 1, b0 = 0, bibi = 0

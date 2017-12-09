@@ -8,6 +8,7 @@ import os
 import ScanDataFile, ReadDataFile
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog
+import webbrowser
 
 class LoadDataFile:
 	""" The class provides load data from file."""
@@ -60,6 +61,12 @@ class LoadDataFile:
 
 		return fname
 
+
+	def info(self):
+		data = self.file_format
+		f = open('info.txt','w')
+		f.close()
+		webbrowser.open('info.txt')
 
 
 
