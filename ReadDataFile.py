@@ -12,7 +12,9 @@ def read(format_file):
 	Returns:
 		data: Dictionary with data vectors
 	"""
+
 	if type(format_file) != dict: return []
+	
 	# get names of the data fields:
 	data_names,data_parameters,format_name = scanDataFileTypes(format_file['types'])
 	if not data_names: return []
@@ -20,8 +22,8 @@ def read(format_file):
 	format_file['names'] = data_names
 	format_file['parameters'] = data_parameters
 	format_file['format'] = format_name
-
-
+	if format_file['read']:
+		data = read_data(format_file)
 
 def scanDataFileTypes(types_list):
 	""" Find and determine correct data_list from DataFileTypes.
@@ -33,7 +35,6 @@ def scanDataFileTypes(types_list):
 		data_parameters: Dictionary where keys = data_names, and items = dictionary with standart structure
 		format_name: name of the defined format current data file
 	"""
-
 	data_names = list()
 	data_parameters = None
 	data_parameters_template = {'SF':1, 'b0':0}
@@ -74,9 +75,10 @@ def scanDataFileTypes(types_list):
 				format_name = s.group()
 				break
 	# get all defined options for this format
+	# ----------------------
 		options_strings = list()
 		s = f.readline()
-		while s:
+		while s and s != '\n':
 			options_strings.append(s)
 			s = f.readline()
 	data_parameters = processing_option_strings(data_parameters, options_strings)
@@ -124,3 +126,8 @@ def processing_option_strings(data_parameters, options_strings):
 							data_parameters[dp[j]][opt_names[i]] = float(opt_values[i])
 			# import pdb; pdb.set_trace()
 	return data_parameters
+
+def read_data(format_file):
+
+	data = []
+	return data

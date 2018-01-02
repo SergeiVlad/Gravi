@@ -4,12 +4,23 @@ from LoadDataFile import LoadDataFile
 class Test_LoadDataFile(unittest.TestCase):
 	"""docstring for Test_LoadDataFile"""
 
-	# testing by init object without argument 
-	# def test_LoadDataFile_get_adress(self):
-	# 	tt = LoadDataFile('/home/segrii/dev/Gravi/')
+	def test_scanFile_head_1(self):
+		expected_head = 4
+		adress = '/home/segrii/dev/Gravi/test1.txt'
+		data = LoadDataFile(adress)
+		self.assertEqual(expected_head, data.file_format['nhead'])
+
+	def test_scanFile_head_2(self):
+		expected_head = 1
+		adress = '/home/segrii/dev/Gravi/test2.txt'
+		data = LoadDataFile(adress)
+		self.assertEqual(expected_head, data.file_format['nhead'])
+
+	def test_scanFile_head_3(self):
+		expected_head = 8
+		adress = '/home/segrii/dev/Gravi/test3.txt'
+		data = LoadDataFile(adress)
+		self.assertEqual(expected_head, data.file_format['nhead'])
 
 if __name__ == '__main__':
-	tt = LoadDataFile('/home/segrii/dev/Gravi/test2.txt')
-	tt.file_format['format']
-	tt.file_format['parameters']
-	# unittest.main(exit = False)
+	unittest.main(exit = False)

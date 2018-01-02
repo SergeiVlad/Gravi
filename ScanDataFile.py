@@ -20,13 +20,14 @@ def scan_file(fname):
 	"""
 	# initialisation D:
 	D = {'filename':'',
-		'read':False, 
-		'col':0, 
+		'read':False,
+		'col':0,
 		'row':0,
+		'format':'Undefined',
 		'nhead':0, 
 		'coleq':True, 
 		'tact_fq':0, 
-		'sep':'\\t', 
+		'sep':'\\t',
 		'hex':False,
 		'types':list()}
 
@@ -34,58 +35,63 @@ def scan_file(fname):
 
 	# Row count
 	# --------------------------------------------------
-	min_row = 2 	# minimal number of lines in the file
-	min_head = 5	# set minimal count for lines
+	min_row = 5 	# minimal number of lines in the file
+	max_head = 25	# set maximum count for lines
 
 	with open(fname) as f:
 	    D['row'] = sum(1 for _ in f)
 
-	if D['row'] <= min_row: 
+	if D['row'] <= min_row:
 		return D
-	elif D['row'] <= min_head: 
-		nCount = D['row']-1  
-	else:
-		nCount = 5
+	elif D['row'] <= max_head:
+		max_head = D['row']
 
 	# Head recognize
 	# --------------------------------------------------
 	with open(fname) as f:
-		# analyze first line
-		types_calc = analyze_line_types(f.readline())
-		if types_calc['str'] > 0:
-			D['nhead'] += 1
-			# analyze next nCount lines:
-			for i in range(nCount):
-				types_calc = analyze_line_types(f.readline())
-				if types_calc['str'] > 0:
-					D['nhead'] += 1
-	if D['row'] == D['nhead']:
+		line = f.readline()
+		types_list = types_recognize(line)
+		types_count = analyze_line_types(line)
+		types_count_prev = types_count
+		for i in range(max_head-1):
+			# conditions for define head strings
+			condition_1 = types_count['str'] > 0  # if line have any strings
+			condition_2 = line == '\n'			  # if line is empty
+			# if deteсt hex words and previous line have another count of hex and int
+			sub_condition_1 = types_count['int'] + types_count['hex']				# calc hex + int current
+			sub_condition_2 = types_count_prev['int'] + types_count_prev['hex']	 	# calc hex + int prewious
+			sub_condition_3 = types_count['hex'] > 0 and types_count_prev['str'] < 3 
+			condition_3 = sub_condition_1 != sub_condition_2 and sub_condition_3
+			if condition_1 or condition_2 or condition_3:
+				D['nhead'] += 1
+				# import pdb; pdb.set_trace()
+			types_count_prev = types_count
+			line = f.readline()
+			types_list = types_recognize(line)
+			types_count = analyze_line_types(line)
+
+	if D['nhead'] == max_head:
+		D['read'] = False
 		return D
 	else:
 		D['read'] = True
 
-
 	# Hexadecimal recognize 
 	# --------------------------------------------------
 	with open(fname, 'r') as f:
-
 		# skip head lines if it exist in file: 
 		for i in range(D['nhead']):
 			f.readline()
-
-		types_calc = analyze_line_types(f.readline())
-		if types_calc['hex'] > 0:
+		t = analyze_line_types(f.readline())
+		if t['hex'] > 0:
 			D['hex'] = True
-
 
 	# Columns recognize
 	# --------------------------------------------------
 	with open(fname, 'r') as f:
-
 		# skip head lines if it exist in file: 
 		for i in range(D['nhead']):
 			f.readline()
-			
 		line_str = f.readline()
 		types_lst = types_recognize(line_str)
 		D['col'] = len(types_lst)
@@ -94,15 +100,11 @@ def scan_file(fname):
 	# Ecuality in nQ columns recognize
 	# --------------------------------------------------
 	nQ = 1000
-
 	if D['row'] > nQ + D['nhead']:
-
 		with open(fname, 'r') as f:
-
 			# skip head lines if it exist in file: 
 			for i in range(D['nhead']):
 				f.readline()
-
 			# find unequality between data rows
 			n_uneq_lines = 0
 			ls_uneq = list()
@@ -121,7 +123,6 @@ def scan_file(fname):
 				D['col'] = list(set(ls_uneq))
 				D['types'] = uqD
 
-
 	# frequency recognize
 	# --------------------------------------------------
 	if D['coleq'] == False:
@@ -133,7 +134,6 @@ def scan_file(fname):
 		D['coleq'] = True
 
 	return D
-
 
 def types_recognize(line):
 
@@ -155,13 +155,14 @@ def types_recognize(line):
 			except ValueError:
 				try: 
 					int(ln_spl[i],16)
-					types_list.append('hex')
+					if len(ln_spl[i])>3:
+						types_list.append('hex')
+					else:
+						types_list.append('str')
 				except ValueError:
 					if ln_spl[i] != '': types_list.append('str')
 					else: types_list.append('')
-
 	return types_list
-
 
 def calc_type_list(types_list):
 
@@ -182,7 +183,7 @@ def calc_type_list(types_list):
 
 	if any(x == 'float' for x in types_list):
 		for i in range(len(types_list)):
-			if types_list[i] == '':
+			if types_list[i] == 'float':
 				type_calc['float'] += 1
 
 	if any(x == 'hex' for x in types_list):
@@ -198,5 +199,4 @@ def analyze_line_types(line):
 
 	types_list = types_recognize(line)
 	types_count = calc_type_list(types_list)
-
 	return types_count
