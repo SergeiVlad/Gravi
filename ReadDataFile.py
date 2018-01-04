@@ -90,7 +90,7 @@ def processing_option_strings(data_parameters, options_strings):
 
 	Args:
 		data_parameters: data_parameters dictionary where each field have data name and it options
-		options_strings: list with string from file which contand options information
+		options_strings: list with strings from file which contand options information
 	Returns:
 		data_parameters: with uprade options for each data field
 	"""

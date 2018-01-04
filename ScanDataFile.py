@@ -46,7 +46,7 @@ def scan_file(fname):
 	elif D['row'] <= max_head:
 		max_head = D['row']
 
-	# Head recognize
+	# Head recognize:
 	# --------------------------------------------------
 	with open(fname) as f:
 		line = f.readline()
