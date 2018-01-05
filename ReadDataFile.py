@@ -60,6 +60,8 @@ def scanDataFileTypes(types_list):
 		for i in types_list:
 			j += 1
 			data_names.append('Var'+str(j)+'_'+i)
+			return data_names, data_parameters, format_name
+		
 	# build data_parameters
 	# ---------------------
 	data_parameters = dict.fromkeys(data_names)
