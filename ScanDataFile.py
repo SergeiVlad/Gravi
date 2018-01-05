@@ -1,7 +1,6 @@
 """ Scan data file format
 
-This module Determine the type of data file for choose head string and features for read 
-11111111
+This module Determine the type of data file for choose head string and features for read
 """
 
 def scan_file(fname):
