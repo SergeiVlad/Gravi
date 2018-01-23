@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """ 
-ReadDataFile module read data after scaning file by ScanDataFile module. 
+ReadDataFile module read data as numpy vectors after scaning file by ScanDataFile module. 
 """
+import numpy as np
 import re
 
 def read(format_file):
@@ -26,7 +27,7 @@ def read(format_file):
 		data = read_data(format_file)
 
 def scanDataFileTypes(types_list):
-	""" Find and determine correct data_list from DataFileTypes.
+	""" Find and determine correct data_list from DataFileTypes. If can't fidn determine own list.
 
 	Args:
 		types_list: List with names of types of the data
@@ -130,6 +131,6 @@ def processing_option_strings(data_parameters, options_strings):
 	return data_parameters
 
 def read_data(format_file):
-
-	data = []
+	# import pdb; pdb.set_trace()
+	data = np.textload(format_file['filename']) 
 	return data

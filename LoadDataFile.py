@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This module provides a load experimental data from files. 
+This module provides a main operation for load experimental data from files in RAM.
 """
 
 import os
@@ -10,13 +10,13 @@ from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog
 import webbrowser
 
 class LoadDataFile:
-	""" The class provides load data from file."""
+	""" The class provides load data from file to RAM."""
 
 	adress = ''
 	file_format = None
 	data = None
 	def __init__(self, *argv):
-		# get correct adress with GUI 	
+		# get correct adress with GUI
 		if not argv: 
 			self.adress = self.open_file_GUI("")
 		else:
@@ -59,7 +59,7 @@ class LoadDataFile:
 		return fname
 
 	def info(self):
-		""" Show data information """
+		""" Show data information in the default TextEditor """
 		data = self.file_format
 		with open('info.txt','w') as f:
 			f.write('adress:\t%s\n' % (self.adress))

@@ -38,3 +38,7 @@ Hartron type 10 columns
 F = {1: "Second", 2: "Tt", 3: "Gx", 4: "Gy", 5: "Gz", 6: "Ax", 7: "Ay", 8: "Az", 9: "SS", 10: "termo"}
 All: SF = 111.11, b0 = -14
 Second: SF = 0.1, b0 = 0.1, b3 = 1222
+
+UKNNS 71 columns
+-------------------
+F = {"Second","Tact", "Gx", "Gy", "Gz", "W", "Ax", "Ay", "Az","G","SS","DPmaxX", "DPminX", "Pk1x", "Umx", "LM_X", "t1x", "t2x", "t3x","DPmaxY", "DPminY", "Pk1y", "Umy", "LM_Y", "t1y", "t2y", "t3y","DPmaxZ", "DPminZ", "Pk1z", "Umz", "LM_Z", "t1z", "t2z", "t3z","UUS_TT1","UUS_TT2", "UUS_H", "UUS_M", "UUS_S", "tstAKx", "tstAKy", "undefined6", "undefined7", "undefined8", "tUUS", "tBPS", "SSbugX", "SSbugY", "SSbugZ", "SSbps", "SSuus", "N1", "N2", "T", "undefined1", "undefined2", "undefined3", "undefined4", "undefined5", "tAKx", "tAKy", "tAKz", "undefined6", "undefined7", "undefined8", "undefined9", "undefined10", "undefined11", "undefined12", "undefined13"}
