@@ -3,8 +3,6 @@ from LoadDataFile import LoadDataFile
 
 class Test_LoadDataFile(unittest.TestCase):
 	"""docstring for Test_LoadDataFile"""
-
-	
 	
 	# test for names
 	# -----------------------------------------------------------
