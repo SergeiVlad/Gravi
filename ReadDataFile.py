@@ -22,5 +22,8 @@ def read(format_file):
 def read_data(format_file):
 	# import pdb; pdb.set_trace()
 	data = []
-	# data = np.loadtxt(format_file['filename'], skiprows = format_file['nhead']) 
+	names = format_file['names']
+	
+	data = np.loadtxt(format_file['filename'], skiprows = format_file['nhead']) 
+
 	return data
