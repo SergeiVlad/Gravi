@@ -19,11 +19,30 @@ def read(format_file):
 	if format_file['read']:
 		data = read_data(format_file)
 
+	return data
+
 def read_data(format_file):
-	# import pdb; pdb.set_trace()
-	data = []
+	data = {}
 	names = format_file['names']
+	types = format_file['types']
 	
-	data = np.loadtxt(format_file['filename'], skiprows = format_file['nhead']) 
+	# define lambdas for convertor
+	hex2int = lambda x: int(x,16)
+
+	# build hex convertor
+	conv = {}
+	for i, ttype in enumerate(types):
+		if ttype == 'hex':
+			conv[i] = hex2int
+
+	import pdb; pdb.set_trace()
+	# read data from file
+	D = np.loadtxt(format_file['filename'], skiprows = format_file['nhead'], converters = conv) 
+
+	for index, (name, ttype) in enumerate (zip(names, types)):
+		if ttype == 'int' or ttype == 'hex':
+			data[name] = D[:,index].astype(int)
+		else:
+			data[name] = D[:,index]
 
 	return data

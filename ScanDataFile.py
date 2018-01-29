@@ -96,10 +96,23 @@ def scan_file(fname):
 		# skip head lines if it exist in file: 
 		for i in range(D['nhead']):
 			f.readline()
+		nLines = 20
+		# get types list by first data line
 		line_str = f.readline()
-		types_lst = types_recognize(line_str)
+		types_lst_1 = types_recognize(line_str)
 		D['col'] = len(types_lst)
-		D['types'] = types_lst
+		D['types'] = types_lst_1
+		# find hex types that was hinden in first lines:
+		# define number of the lines for testing for hiden hex
+		if D['row'] < nLines + D['nhead']:
+			nLines = D['row'] - D['nhead']
+		# find types list with addition hex types
+		# for line in range(nLines):
+		# 	line_str = f.readline()
+		# 	types_lst = types_recognize(line_str)
+
+		# 	D['col'] = len(types_lst)
+		# 	D['types'] = types_lst
 
 	# Ecuality in nQ columns recognize
 	# --------------------------------------------------
