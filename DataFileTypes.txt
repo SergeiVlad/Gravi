@@ -38,6 +38,7 @@ Hartron type 10 columns
 F = {1: "Second", 2: "Tt", 3: "Gx", 4: "Gy", 5: "Gz", 6: "Ax", 7: "Ay", 8: "Az", 9: "SS", 10: "termo"}
 All: SF = 111.11, b0 = -14
 Second: SF = 0.1, b0 = 0.1, b3 = 1222
+types = {9: "hex"}
 
 UKNNS 71 columns
 -------------------

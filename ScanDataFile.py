@@ -100,7 +100,7 @@ def scan_file(fname):
 		# get types list by first data line
 		line_str = f.readline()
 		types_lst_1 = types_recognize(line_str)
-		D['col'] = len(types_lst)
+		D['col'] = len(types_lst_1)
 		D['types'] = types_lst_1
 		# find hex types that was hinden in first lines:
 		# define number of the lines for testing for hiden hex
@@ -152,13 +152,18 @@ def scan_file(fname):
 
 	# format, parameters and names recognize from DataFileTypes.txt	
 	# ---------------------------------------------------
-	data_names,data_parameters,format_name = scanDataFileTypes(D['types'])
+	data_names,data_parameters,format_name, options_strings = scanDataFileTypes(D['types'])
 	if not data_names: return []
 	# add new keys: to the format_file dictionary:
 	D['names'] = data_names
 	D['parameters'] = data_parameters
 	D['format'] = format_name
+	
+	# check data types string
 	# -------------------------------
+	# import pdb; pdb.set_trace()
+	D['types'] = checkDataTypes(D, options_strings)
+
 	return D
 
 
@@ -176,6 +181,7 @@ def scanDataFileTypes(types_list):
 	data_parameters = None
 	data_parameters_template = {'SF':1, 'b0':0}
 	format_name = 'undefined'
+	options_strings = list()
 	storage = 'DataFileTypes.txt'
 
 	# find appropriate with current format strings in file and then 
@@ -192,12 +198,13 @@ def scanDataFileTypes(types_list):
 				if len(names) == len(types_list):
 					data_names = names
 					break
+	# import pdb; pdb.set_trace()
 	if not data_names:
 		j = 0
 		for i in types_list:
 			j += 1
 			data_names.append('Var'+str(j)+'_'+i)
-			return data_names, data_parameters, format_name
+			return data_names, data_parameters, format_name, options_strings
 		
 	# build data_parameters
 	# ---------------------
@@ -205,7 +212,7 @@ def scanDataFileTypes(types_list):
 	for i in data_parameters.keys():
 		data_parameters[i] = data_parameters_template.copy()
 
-	# get  format name
+	# get format name
 	# ---------------------
 	with open(storage,'r') as f:
 		for i, line in enumerate(f):
@@ -213,16 +220,17 @@ def scanDataFileTypes(types_list):
 				s = re.search('.+', line)
 				format_name = s.group()
 				break
+
 	# get all defined options for this format
 	# ----------------------
-		options_strings = list()
 		s = f.readline()
 		while s and s != '\n':
 			options_strings.append(s)
 			s = f.readline()
+			
 	data_parameters = processing_option_strings(data_parameters, options_strings)
 
-	return data_names, data_parameters, format_name
+	return data_names, data_parameters, format_name, options_strings
 
 
 def processing_option_strings(data_parameters, options_strings):
@@ -264,9 +272,40 @@ def processing_option_strings(data_parameters, options_strings):
 					for j in range(len(dp)):
 						if dp[j] == sign:
 							data_parameters[dp[j]][opt_names[i]] = float(opt_values[i])
-			# import pdb; pdb.set_trace()
+
 	return data_parameters
 
+def checkDataTypes(D, options_strings):
+	"""
+	Check data types that was defined early, by read options from DataFileTypes.
+	
+	If DataFileTypes have options 'types' under current format name in next format:
+		types = {6: 'hex'}
+	function will change in D['formats'] list 7-th element on 'hex'.
+
+	Args:
+		D: dictionary with all ScanDataFile results.
+		options_strings: list with strings from file which contand options information for current file
+	Returns:
+		formats: list with data types for refresh D['types']
+	"""
+
+	# initial data
+	name_f = D['format']
+	types = D['types']
+	if name_f == 'undefined':
+		return types
+	# read option_strings and find current format options
+	for line in options_strings:
+		if re.search('types\s*=\s*{.+}', line):
+			type_ind = re.findall('(\d+)\s*:', line)
+			type_ind = list(map(int, type_ind))
+			type_val = re.findall('\d+\s*:\s*\"(\w+)\"', line)
+			if len(type_ind) == len(type_val):
+				for i, ttype in enumerate(type_val):
+					types[type_ind[i]-1] = type_val[i]
+
+	return types
 
 def types_recognize(line):
 

@@ -35,7 +35,7 @@ def read_data(format_file):
 		if ttype == 'hex':
 			conv[i] = hex2int
 
-	import pdb; pdb.set_trace()
+	# import pdb; pdb.set_trace()
 	# read data from file
 	D = np.loadtxt(format_file['filename'], skiprows = format_file['nhead'], converters = conv) 
 
