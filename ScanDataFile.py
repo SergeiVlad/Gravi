@@ -204,7 +204,7 @@ def scanDataFileTypes(types_list):
 		for i in types_list:
 			j += 1
 			data_names.append('Var'+str(j)+'_'+i)
-			return data_names, data_parameters, format_name, options_strings
+		return data_names, data_parameters, format_name, options_strings
 		
 	# build data_parameters
 	# ---------------------

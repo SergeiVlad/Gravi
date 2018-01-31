@@ -8,6 +8,7 @@ import ScanDataFile, ReadDataFile
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog
 import webbrowser
+import matplotlib.pyplot as plt
 
 class LoadDataFile:
 	""" The class provides load data from file to RAM."""
@@ -72,6 +73,8 @@ class LoadDataFile:
 				f.write('%-s\t%-s\n' % ('readability:','True'))
 			else:
 				f.write('%-s\t%-s\n' % ('readability:','False'))
+			if 'names' in data:
+				f.write('%s\t%-s\n'% ('data names: ',data['names']))
 			if 'types' in data:
 				f.write('%s\t%-s\n'% ('data types: ',data['types']))
 			f.write('%-s\n' % ('-------------------------------'))
@@ -95,3 +98,39 @@ class LoadDataFile:
 		webbrowser.open('DataFileTypes.txt')
 		self = self.__init__(self.adress)
 
+	def get(self,signal):
+		""" Get data vector by signal name
+
+			Args:
+				signal - string with data name
+		"""
+		return self.data[signal]
+
+	def signals(self):
+		""" 
+		Show all available signals in shell
+		"""
+		print(self.file_format['names'])
+
+	def plot(self, signal):
+		"""
+		Plot signal
+		
+		Args:
+			signal - string signal name
+			signal - list with signals names
+		"""
+		# import pdb; pdb.set_trace()
+		if type(signal) == str:
+			plt.plot(self.data[signal])
+			plt.grid(True)
+			plt.title(signal)
+		elif type(signal) == list:
+			y = {}
+			fig, ax = plt.subplots(len(signal), sharey=False)
+			for i, name in enumerate(signal):
+				ax[i].plot(self.data[name])
+				ax[i].set(title=name)
+				ax[i].grid(True)
+
+		plt.show()
