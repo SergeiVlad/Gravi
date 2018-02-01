@@ -1,23 +1,29 @@
-""" Scan data file format
+""" Determine the type of the data file for choose features for its read."""
 
-This module Determine the type of data file for choose head string and features for read
-"""
 import re
 
 def scan_file(fname):
-
 	""" 
-	Di = scan(fname) - function get file path and return Data info dictionary D with fields:
-		read - if True file could be read for processing, in other case - not
-		col - number of columns
-		row - number of rows
-		nhead - number of head string
-		coleq - show equal or not all strings, if coleq = true it mean that all strings are equal in the another case there are two type strings in data file: total and tact strings.
-		tactf - show how many times occurs such string in relate to the total string. For example tactf = 200 mean that each 200th string will be a total. tact_col > 1 
-		freq - show record frequency of the data
-		sep - separator. Defautl separator jis \\t
-		hex - if hexadecimal numbers are present in data
-		types - list of the each rows types
+	Function get file path and return Data info dictionary.
+	
+	Args:
+		fname: string with data path
+	Returns:
+		D: dictionary with fields:
+			filename - pathname for data access
+			read - if True file could be read for processing, in other case - not
+			col - number of columns
+			row - number of rows
+			nhead - number of head string
+			coleq - show equal or not all strings, if coleq = true it mean that all strings are equal in the another case there are two type strings in data file: total and tact strings.
+			tactf - show how many times occurs such string in relate to the total string. For example tactf = 200 mean that each 200th string will be a total. tact_col > 1 
+			freq - show record frequency of the data
+			sep - separator. Defautl separator jis \\t
+			hex - if hexadecimal numbers are present in data
+			types - list of the each rows types.
+			names - names of the signals
+			paramaters - specified in DataFileTypes.txt options for signals
+			format - format name.
 	"""
 	# initialisation D:
 	D = {'filename':'',
@@ -175,7 +181,7 @@ def scanDataFileTypes(types_list):
 	Returns:
 		data_names: List with names of data fields
 		data_parameters: Dictionary where keys = data_names, and items = dictionary with standart structure
-		format_name: name of the defined format current data file
+		format_name: name of the defined format current data file.
 	"""
 	data_names = list()
 	data_parameters = None
@@ -234,7 +240,7 @@ def scanDataFileTypes(types_list):
 
 
 def processing_option_strings(data_parameters, options_strings):
-	""" Recognize options for each data fields from otion_strings list
+	""" Recognize options for each data fields from otion_strings list.
 
 	Args:
 		data_parameters: data_parameters dictionary where each field have data name and it options
@@ -242,7 +248,6 @@ def processing_option_strings(data_parameters, options_strings):
 	Returns:
 		data_parameters: with uprade options for each data field
 	"""
-
 	# find the begin of the options:
 	i = 0
 	for line in options_strings:
@@ -289,7 +294,6 @@ def checkDataTypes(D, options_strings):
 	Returns:
 		formats: list with data types for refresh D['types']
 	"""
-
 	# initial data
 	name_f = D['format']
 	types = D['types']
@@ -308,9 +312,9 @@ def checkDataTypes(D, options_strings):
 	return types
 
 def types_recognize(line):
-
-	# types_recognize(line) - return list with type names of the recognized data
-
+	"""
+	Return list with type names of the recognized data.
+	"""
 	types_list = []
 
 	ln_spl = line.split()
@@ -337,9 +341,9 @@ def types_recognize(line):
 	return types_list
 
 def calc_type_list(types_list):
-
-	# calc_type_list - return dictionary with result of calculate each type of data from type_list
-
+	"""
+	Return dictionary with result of calculate each type of data from type_list.
+	"""
 	# initialisation type_calc:
 	type_calc = {'str':0, 'int':0, 'float':0, 'hex':0}
 
@@ -366,9 +370,9 @@ def calc_type_list(types_list):
 	return type_calc	
 
 def analyze_line_types(line):
-
-	# analyze_types function get data line and return dict with types guantity
-
+	"""
+	Analyze_types function get data line and return dict with types guantity.
+	"""
 	types_list = types_recognize(line)
 	types_count = calc_type_list(types_list)
 	return types_count

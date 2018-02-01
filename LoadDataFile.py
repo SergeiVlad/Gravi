@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-"""
-This module provides a main operation for load experimental data from files in RAM.
-"""
+""" Load sensors data from files to RAM."""
 
 import os
 import ScanDataFile, ReadDataFile
@@ -11,35 +8,34 @@ import webbrowser
 import matplotlib.pyplot as plt
 
 class LoadDataFile:
-	""" The class provides load data from file to RAM."""
+
+	""" Provides load data from file to RAM.  """
 
 	adress = ''
 	file_format = None
 	data = None
 	def __init__(self, *argv):
-		# get correct adress with GUI
+		# Get correct adress with GUI.  
 		if not argv: 
 			self.adress = self.open_file_GUI("")
 		else:
 			self.adress = self.open_file_GUI(argv[0])
 		if not self.adress:
 			return
-		# recognizing file format
+		# Recognizing file format.
 		self.file_format = ScanDataFile.scan_file(self.adress)
-		# reading data
+		# Reading data
 		if self.file_format['read']:
 			self.data = ReadDataFile.read(self.file_format)
 
 	def open_file_GUI(self, arg):
-		"""  Call GUI OpenFileDialog and return the correct pathname.
+		"""  Call GUI OpenFileDialog and return the correct pathname.  
 
 		Args:
 			arg: File name, or path, or empty.
 		Returns:
 			fname: Absolute path for acces to data file.
-			
 		"""
-
 		fname = ''
 		if not arg:
 			app = QApplication(sys.argv)
@@ -60,7 +56,9 @@ class LoadDataFile:
 		return fname
 
 	def info(self):
-		""" Show data information in the default TextEditor """
+		"""
+		Show data information in the default TextEditor.
+		"""
 		data = self.file_format
 		with open('info.txt','w') as f:
 			f.write('adress:\t%s\n' % (self.adress))
@@ -94,12 +92,14 @@ class LoadDataFile:
 					i += 1
 
 	def set_param(self):
-		""" Open DataFileTypes.txt for edit and save new parameters """
+		"""
+		Open DataFileTypes.txt for edit and save new parameters.
+		"""
 		webbrowser.open('DataFileTypes.txt')
 		self = self.__init__(self.adress)
 
 	def get(self,signal):
-		""" Get data vector by signal name
+		""" Get data vector by signal name.  
 
 			Args:
 				signal - string with data name
@@ -107,14 +107,14 @@ class LoadDataFile:
 		return self.data[signal]
 
 	def signals(self):
-		""" 
-		Show all available signals in shell
+		"""
+		Show all available signals in shell.
 		"""
 		print(self.file_format['names'])
 
 	def plot(self, signal):
 		"""
-		Plot signal
+		Plot signal.  
 		
 		Args:
 			signal - string signal name
