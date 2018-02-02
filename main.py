@@ -1,5 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
+from PyQt5.QtWidgets import (QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,
+                             QPushButton, QDesktopWidget, QTabWidget, QVBoxLayout)
 from PyQt5.QtGui import QIcon
  
 class App(QWidget):
@@ -7,22 +8,28 @@ class App(QWidget):
     def __init__(self):
         super().__init__()
         self.title = 'Gravi'
-        self.left = 210
-        self.top = 210
-        self.width = 640
-        self.height = 480
+        self.resize(250, 400)
         self.initUI()
  
     def initUI(self):
         self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
- 
+        self.setWindowIcon(QIcon('icon.png'))
+        self.center()
+
+        btn = QPushButton('Open',self)
+        btn.move(50, 50)
         self.openFileNameDialog()
-        self.openFileNamesDialog()
-        self.saveFileDialog()
  
         self.show()
- 
+
+    def center(self):
+
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
+
     def openFileNameDialog(self):    
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
@@ -30,20 +37,7 @@ class App(QWidget):
         if fileName:
             print(fileName)
  
-    def openFileNamesDialog(self):    
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        files, _ = QFileDialog.getOpenFileNames(self,"QFileDialog.getOpenFileNames()", "","All Files (*);;Python Files (*.py)", options=options)
-        if files:
-            print(files)
- 
-    def saveFileDialog(self):    
-        options = QFileDialog.Options()
-        options |= QFileDialog.DontUseNativeDialog
-        fileName, _ = QFileDialog.getSaveFileName(self,"QFileDialog.getSaveFileName()","","All Files (*);;Text Files (*.txt)", options=options)
-        if fileName:
-            print(fileName)
- 
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App()
