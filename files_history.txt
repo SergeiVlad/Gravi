@@ -1,3 +1,5 @@
+/home/segrii/dev/Gravi/test4.txt
+/home/segrii/dev/Gravi/test1.txt
 D:/dev/Gravi/test2.txt
 D:/dev/Gravi/info.txt
 D:/dev/Gravi/main.py

@@ -30,7 +30,7 @@ class MytableWidget(QWidget):
     """docstring for MytableWidget"""
     def __init__(self, parent):
         super(QWidget, self).__init__(parent)
-        self.layout = QVBoxLayout(self)        
+        self.layout = QVBoxLayout()        
 
         #Initialize tab screen
         self.tabs = QTabWidget()
@@ -42,10 +42,19 @@ class MytableWidget(QWidget):
         self.tabs.addTab(self.tab1, "Files")
         self.tabs.addTab(self.tab2, "Dir")
 
+        # get open histories
+        if not os.path.exists('files_history.txt'):
+            with open('files_history.txt', 'r') as f:
+                files_history = f.read().splitlines()
+            path_history = getPathList(files_history)
+        else:
+            files_history = list()
+            path_history = list()
+
         # Create tab 1
         self.tab1.layout = QVBoxLayout(self)
         self.btn1 = QPushButton("Open")
-        self.lst1 = QListWidget()
+        self.lst1 = QListWidget(files_history)
         self.btn1.clicked.connect(self.openFileNameDialog)
         self.tab1.layout.addWidget(self.lst1)
         self.tab1.layout.addWidget(self.btn1)
@@ -77,9 +86,9 @@ class MytableWidget(QWidget):
             else:
                 # get all files from history 
                 with open('files_history.txt', 'r') as f:
-                    file_history = f.read().splitlines()
+                    files_history = f.read().splitlines()
                 # check file for exist in history
-                if not fileName in file_history:
+                if not fileName in files_history:
                     with open('files_history.txt', 'a') as f:
                         f.write(fileName+'\n')
                 # sort history list by last open file
@@ -97,7 +106,15 @@ class MytableWidget(QWidget):
                 self.lst1.addItem(currFilePath)
                 self.lst2.addItem(currFileDir)
 
+def getPathList(files_history):
+    """ Return path_history listh from files_history without repeated."""
+    path_history = list()
+    for item in files_history:
+        curr_path = ntpath.dirname(item)
+        if curr_path not in path_history:
+            path_history.append(curr_path)
 
+    return path_history
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
