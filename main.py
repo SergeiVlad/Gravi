@@ -1,4 +1,5 @@
-import sys
+import sys, os
+import ntpath
 from PyQt5.QtWidgets import (QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,
                              QPushButton, QDesktopWidget, QTabWidget, QVBoxLayout, 
                              QMainWindow, QListWidget)
@@ -51,7 +52,13 @@ class MytableWidget(QWidget):
         self.tab1.setLayout(self.tab1.layout)
 
         # Create tab 2
-        
+        self.tab2.layout = QVBoxLayout(self)
+        self.btn2 = QPushButton("Open")
+        self.lst2 = QListWidget()
+        self.btn2.clicked.connect(self.openFileNameDialog)
+        self.tab2.layout.addWidget(self.lst2)
+        self.tab2.layout.addWidget(self.btn2)
+        self.tab2.setLayout(self.tab2.layout)    
 
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
@@ -61,9 +68,36 @@ class MytableWidget(QWidget):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
+
         if fileName:
-            print(fileName)
- 
+            # create files_history if it is not exits
+            if not os.path.exists('files_history.txt'):
+                with open('files_history.txt', 'w') as out:
+                    out.write(fileName+'\n')
+            else:
+                # get all files from history 
+                with open('files_history.txt', 'r') as f:
+                    file_history = f.read().splitlines()
+                # check file for exist in history
+                if not fileName in file_history:
+                    with open('files_history.txt', 'a') as f:
+                        f.write(fileName+'\n')
+                # sort history list by last open file
+                with open('files_history.txt', 'r') as f:
+                    files_history = f.read().splitlines()
+                del files_history[files_history.index(fileName)]
+                files_history.insert(0, fileName)
+
+                with open('files_history.txt','w') as f:
+                    for line in files_history:
+                        f.write("%s\n" % line)
+            
+            for currFilePath in files_history:
+                currFileDir = ntpath.dirname(currFilePath)
+                self.lst1.addItem(currFilePath)
+                self.lst2.addItem(currFileDir)
+
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
