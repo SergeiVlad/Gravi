@@ -1,3 +1,8 @@
+/home/segrii/dev/Gravi/test1.txt
+/home/segrii/dev/Gravi/test2.txt
+/home/segrii/dev/Gravi/test3.txt
+/home/segrii/dev/Gravi/test4.txt
+/home/segrii/dev/kata/Calculator.py
 D:/Figure_1.png
 D:/dev/Gravi/test1.txt
 D:/dev/training/test0.txt
@@ -10,7 +15,5 @@ D:/dev/Gravi/test3.txt
 D:/dev/Gravi/DataFileTypes.txt
 D:/dev/training/test5.txt
 D:/dev/Gravi/icon.png
-/home/segrii/dev/Gravi/test4.txt
-/home/segrii/dev/Gravi/test1.txt
 D:/dev/Gravi/main.py
 D:/dev/Gravi/LoadDataFile.py
