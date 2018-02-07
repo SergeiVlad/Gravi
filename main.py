@@ -2,7 +2,7 @@ import sys, os
 import ntpath
 from PyQt5.QtWidgets import (QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,
                              QPushButton, QDesktopWidget, QTabWidget, QVBoxLayout, 
-                             QMainWindow, QListWidget)
+                             QMainWindow, QListWidget, QListWidgetItem)
 from PyQt5.QtGui import QIcon
  
 class App(QMainWindow):
@@ -43,7 +43,7 @@ class MytableWidget(QWidget):
         self.tabs.addTab(self.tab2, "Dir")
 
         # get open histories
-        if not os.path.exists('files_history.txt'):
+        if os.path.exists('files_history.txt'):
             with open('files_history.txt', 'r') as f:
                 files_history = f.read().splitlines()
             path_history = getPathList(files_history)
@@ -54,7 +54,9 @@ class MytableWidget(QWidget):
         # Create tab 1
         self.tab1.layout = QVBoxLayout(self)
         self.btn1 = QPushButton("Open")
-        self.lst1 = QListWidget(files_history)
+        self.lst1 = QListWidget()
+        for item in files_history:
+            self.lst1.addItem(item)
         self.btn1.clicked.connect(self.openFileNameDialog)
         self.tab1.layout.addWidget(self.lst1)
         self.tab1.layout.addWidget(self.btn1)
@@ -64,6 +66,8 @@ class MytableWidget(QWidget):
         self.tab2.layout = QVBoxLayout(self)
         self.btn2 = QPushButton("Open")
         self.lst2 = QListWidget()
+        for item in path_history:
+            self.lst2.addItem(item)
         self.btn2.clicked.connect(self.openFileNameDialog)
         self.tab2.layout.addWidget(self.lst2)
         self.tab2.layout.addWidget(self.btn2)
@@ -80,6 +84,7 @@ class MytableWidget(QWidget):
 
         if fileName:
             # create files_history if it is not exits
+
             if not os.path.exists('files_history.txt'):
                 with open('files_history.txt', 'w') as out:
                     out.write(fileName+'\n')
@@ -100,11 +105,15 @@ class MytableWidget(QWidget):
                 with open('files_history.txt','w') as f:
                     for line in files_history:
                         f.write("%s\n" % line)
-            
+            self.lst1.clear()
+            self.lst2.clear()
             for currFilePath in files_history:
-                currFileDir = ntpath.dirname(currFilePath)
                 self.lst1.addItem(currFilePath)
-                self.lst2.addItem(currFileDir)
+
+            path_history = getPathList(files_history)
+            for curPath in path_history:
+                self.lst2.addItem(curPath)
+
 
 def getPathList(files_history):
     """ Return path_history listh from files_history without repeated."""
@@ -115,6 +124,7 @@ def getPathList(files_history):
             path_history.append(curr_path)
 
     return path_history
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
