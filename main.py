@@ -81,62 +81,55 @@ class MytableWidget(QWidget):
         self.setLayout(self.layout)
 
     def openFileNameDialog(self):
-
-
+        # Get adress from tab lists:
         if self.tabs.tabText(self.tabs.currentIndex()) == 'Files':
             if self.lst1.currentItem():
                 fileName = self.lst1.currentItem().text()
-                print(fileName)
             else:
                 fileName = self.filepath
-                print(fileName)
         elif self.tabs.tabText(self.tabs.currentIndex()) == 'Dir':
-            if self.lst1.currentItem():
-                fileName = self.lst1.currentItem().text()
-                print(fileName)
+            if self.lst2.currentItem():
+                fileName = self.lst2.currentItem().text()
+        # Check adress and set default dir if it not exist
+        if not os.path.isfile(fileName) and not os.path.isdir(fileName):
+            fileName = self.filepath
 
+        # Load file 
+        if os.path.isdir(fileName):
+            print('Crash! by open')
+            fileName, _ = QFileDialog.getOpenFileName(self,"Select file for load", directory = fileName)
 
-            # print(self.lst1.currentItem().text())
-        # elif self.tabs.tabText(self.tabs.currentIndex()) == 'Dir':
-            # fileName = self.lst2.currentItem().text()
-            # print(self.lst2.currentItem().text())
-        # print(fileName)
-
-        # options = QFileDialog.Options()
-        # options |= QFileDialog.DontUseNativeDialog
-        # fileName, _ = QFileDialog.getOpenFileName(self,"QFileDialog.getOpenFileName()", "","All Files (*);;Python Files (*.py)", options=options)
-
-        # if fileName:
-        #     # create files_history if it is not exits
-        #     if not os.path.exists('files_history.txt'):
-        #         with open('files_history.txt', 'w') as out:
-        #             out.write(fileName+'\n')
-        #     else:
-        #         # get all files from history 
-        #         with open('files_history.txt', 'r') as f:
-        #             files_history = f.read().splitlines()
-        #         # check file for exist in history
-        #         if not fileName in files_history:
-        #             with open('files_history.txt', 'a') as f:
-        #                 f.write(fileName+'\n')
-        #         # sort history list by last open file
-        #         with open('files_history.txt', 'r') as f:
-        #             files_history = f.read().splitlines()
-        #         del files_history[files_history.index(fileName)]
-        #         files_history.insert(0, fileName)
-
-        #         with open('files_history.txt','w') as f:
-        #             for line in files_history:
-        #                 f.write("%s\n" % line)
-        #     self.lst1.clear()
-        #     self.lst2.clear()
-        #     for currFilePath in files_history:
-        #         self.lst1.addItem(currFilePath)
-
-        #     path_history = getPathList(files_history)
-        #     for curPath in path_history:
-        #         self.lst2.addItem(curPath)
-
+        # Get and sort history, refresh tab lists:
+        if os.path.isfile(fileName):
+            # create files_history if it is not exits
+            if not os.path.exists('files_history.txt'):
+                with open('files_history.txt', 'w') as out:
+                    out.write(fileName+'\n')
+            else:
+                # get all files from history 
+                with open('files_history.txt', 'r') as f:
+                    files_history = f.read().splitlines()
+                # check file for exist in history
+                if not fileName in files_history:
+                    with open('files_history.txt', 'a') as f:
+                        f.write(fileName+'\n')
+                # sort history list by last open file
+                with open('files_history.txt', 'r') as f:
+                    files_history = f.read().splitlines()
+                del files_history[files_history.index(fileName)]
+                files_history.insert(0, fileName)
+                with open('files_history.txt','w') as f:
+                    for line in files_history:
+                        f.write("%s\n" % line)
+            self.lst1.clear()
+            self.lst2.clear()
+            for currFilePath in files_history:
+                self.lst1.addItem(currFilePath)
+            path_history = getPathList(files_history)
+            for curPath in path_history:
+                self.lst2.addItem(curPath)
+            A = LoadDataFile(fileName)
+            A.info()
 
 def getPathList(files_history):
     """ Return path_history listh from files_history without repeated."""

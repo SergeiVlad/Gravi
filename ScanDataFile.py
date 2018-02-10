@@ -47,7 +47,6 @@ def scan_file(fname):
 	# --------------------------------------------------
 	min_row = 5 	# minimal number of lines in the file
 	max_head = 25	# set maximum count for lines
-
 	with open(fname) as f:
 	    D['row'] = sum(1 for _ in f)
 
@@ -80,7 +79,7 @@ def scan_file(fname):
 			types_list = types_recognize(line)
 			types_count = analyze_line_types(line)
 
-	if D['nhead'] == max_head:
+	if D['nhead'] == max_head or D['nhead'] > 15:
 		D['read'] = False
 		return D
 	else:

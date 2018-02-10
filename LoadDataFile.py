@@ -15,7 +15,7 @@ class LoadDataFile:
 	file_format = None
 	data = None
 	def __init__(self, *argv):
-		# Get correct adress with GUI.  
+		# Get correct adress with GUI.
 		if not argv: 
 			self.adress = self.open_file_GUI("")
 		else:
@@ -84,6 +84,7 @@ class LoadDataFile:
 			webbrowser.open('info.txt')
 			f.write('%-s\n' % ('-------------------------------'))
 			f.write('%s\n' % 'first 10 rows:')
+			f.write('%-s\n' % ('-------------------------------'))
 			with open(data['filename']) as b:
 				i = 0
 				while i < data['col'] or i < 10:
