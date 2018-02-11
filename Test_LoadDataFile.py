@@ -4,6 +4,23 @@ from LoadDataFile import LoadDataFile
 class Test_LoadDataFile(unittest.TestCase):
 	"""docstring for Test_LoadDataFile"""
 	
+	# test unreadable file
+	#------------------------------------------------------------
+	def test_ScanFile_unread_test_file(self):
+		expected_name = 'Undefined'
+		adress = 'test.JPG'
+		data = LoadDataFile(adress)
+		self.assertEqual(expected_name, data.file_format['format'])	
+
+	def test_ReadFile_test_info(self):
+		expected = 'ok'
+		adress = 'test.JPG'
+		data = LoadDataFile(adress)
+		try:
+			data.info(); a = 'ok'
+		except:
+			a = 'crash'
+		self.assertEqual(expected, a)		
 	# test for names
 	# -----------------------------------------------------------
 	def test_ScanFile_name_test1_file(self):

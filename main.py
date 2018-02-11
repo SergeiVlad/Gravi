@@ -128,8 +128,11 @@ class MytableWidget(QWidget):
             path_history = getPathList(files_history)
             for curPath in path_history:
                 self.lst2.addItem(curPath)
-            A = LoadDataFile(fileName)
-            A.info()
+            try:
+                A = LoadDataFile(fileName)
+                A.info()
+            except:
+                print('Crash')
 
 def getPathList(files_history):
     """ Return path_history listh from files_history without repeated."""

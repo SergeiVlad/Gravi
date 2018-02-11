@@ -8,9 +8,7 @@ import webbrowser
 import matplotlib.pyplot as plt
 
 class LoadDataFile:
-
 	""" Provides load data from file to RAM.  """
-
 	adress = ''
 	file_format = None
 	data = None
@@ -81,16 +79,27 @@ class LoadDataFile:
 					f.write('%s\n' % 'parameters:')
 					for i in data['parameters'].keys():
 						f.write('\t%-s:\t%-s\n' % (i, data['parameters'][i]))
+				else:
+					f.write('%s\n' % 'parameters:')
+					f.write('\t%s\n' % 'not parameters.')
+
+			try:
+				f.write('%-s\n' % ('-------------------------------'))
+				with open(data['filename']) as b:
+					i = 0
+					while i < data['col'] or i < 10:
+						s[i] = b.readline()
+						f.write('%-s' % s)
+						i += 1
+				f.write('%s\n' % 'first rows:')
+				f.write('%-s\n' % ('-------------------------------'))
+				for i in range(len(s)):
+					f.write('%-s' % s[i])
+			except: 
+				f.write('%s\n' % 'first rows:')
+				f.write('\t%s' % 'unreadable file.')
+
 			webbrowser.open('info.txt')
-			f.write('%-s\n' % ('-------------------------------'))
-			f.write('%s\n' % 'first 10 rows:')
-			f.write('%-s\n' % ('-------------------------------'))
-			with open(data['filename']) as b:
-				i = 0
-				while i < data['col'] or i < 10:
-					s = b.readline()
-					f.write('%-s' % s)
-					i += 1
 
 	def set_param(self):
 		"""
