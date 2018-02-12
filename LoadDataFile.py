@@ -61,7 +61,7 @@ class LoadDataFile:
 		with open('info.txt','w') as f:
 			f.write('adress:\t%s\n' % (self.adress))
 			f.write('format:\t%s\n' % (data['format']))
-			f.write('%-s\t%-s\n' % ('length:',data['row']))
+			f.write('%-s\t%-s\n' % ('rows:',data['row']))
 			f.write('%-s\t%-s\n' % ('columns:',data['col']))
 			f.write('%-s\t%-s\n' % ('frequency:',data['tact_fq']))
 			f.write('%-s\t%-s\n' % ('head rows:',data['nhead']))
@@ -73,6 +73,12 @@ class LoadDataFile:
 				f.write('%s\t%-s\n'% ('data names: ',data['names']))
 			if 'types' in data:
 				f.write('%s\t%-s\n'% ('data types: ',data['types']))
+			if 'names' in data:
+				f.write('%s\n' % 'String for DataFileTypes.txt:')	
+				f.write('F = {')
+				for i, name in enumerate(data['names']):
+					f.write('%d: "%s", ' % (i+1, name) )
+				f.write('}\n')
 			f.write('%-s\n' % ('-------------------------------'))
 			if 'parameters' in data:
 				if isinstance(data['parameters'], dict):
@@ -82,22 +88,19 @@ class LoadDataFile:
 				else:
 					f.write('%s\n' % 'parameters:')
 					f.write('\t%s\n' % 'not parameters.')
-
 			try:
 				f.write('%-s\n' % ('-------------------------------'))
+				f.write('%s\n' % 'first rows:')
+				f.write('%-s\n' % ('============='))
 				with open(data['filename']) as b:
 					i = 0
-					while i < data['col'] or i < 10:
-						s[i] = b.readline()
+					while i < data['col'] or i < 100:
+						s = b.readline()
 						f.write('%-s' % s)
 						i += 1
-				f.write('%s\n' % 'first rows:')
-				f.write('%-s\n' % ('-------------------------------'))
-				for i in range(len(s)):
-					f.write('%-s' % s[i])
 			except: 
-				f.write('%s\n' % 'first rows:')
-				f.write('\t%s' % 'unreadable file.')
+				f.write('%s\n' % 'stop reading file:')
+				f.write('\t%s' % 'unreadable rows.')
 
 			webbrowser.open('info.txt')
 
