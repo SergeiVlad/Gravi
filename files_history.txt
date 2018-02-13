@@ -1,4 +1,3 @@
-D:/Снимок.JPG
 D:/Figure_1.png
 D:/plot.log
 D:/dev/Gravi/info.txt
