@@ -38,8 +38,7 @@ def scan_file(fname):
 		'hex':False,
 		'types':list(),
 		'names':[],
-		'parameters':[],
-		'format':''}
+		'parameters':[]}
 
 	D['filename'] = fname
 
@@ -47,8 +46,11 @@ def scan_file(fname):
 	# --------------------------------------------------
 	min_row = 5 	# minimal number of lines in the file
 	max_head = 25	# set maximum count for lines
-	with open(fname) as f:
-	    D['row'] = sum(1 for _ in f)
+	try:
+		with open(fname) as f:
+		    D['row'] = sum(1 for _ in f)
+	except:
+		return D
 
 	if D['row'] <= min_row:
 		return D

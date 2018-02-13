@@ -1,20 +1,32 @@
-D:/Figure_1.png
-D:/plot.log
-D:/dev/Gravi/info.txt
-D:/dev/Gravi/test5.txt
-D:/dev/Gravi/LoadDataFile.py
-D:/dev/Gravi/main.py
+<<<<<<< HEAD
+=======
 D:/dev/Gravi/test1.txt
-D:/dev/Gravi/test2.txt
-D:/dev/Gravi/icon.png
-D:/dev/training/test5.txt
 D:/dev/training/test0.txt
-D:/dev/Gravi/test4.txt
-D:/dev/Gravi/icon2.png
-D:/dev/Gravi/main_test.py
-D:/dev/Gravi/ReadDataFile.py
+E:/»—œ€“¿Õ»ﬂ/KKP16/KKP16_18_01_2017_TM
+E:/»—œ€“¿Õ»ﬂ/KKP16/KKP16_18_01_2017_TM.mat
+D:/—ÌËÏÓÍ.JPG
+D:/dev/training/files_history.txt
+D:/dev/Gravi/test.JPG
+D:/dev/Gravi/test5.txt
+E:/»—œ€“¿Õ»ﬂ/” ÕÕ—/7-02-18/UKNNS_07_02_2018_test_TM
 D:/dev/Gravi/DataFileTypes.txt
+D:/dev/Gravi/icon.png
+E:/»—œ€“¿Õ»ﬂ/RL16/20.11.13/IUS16_14_11_13_n01_M06_p14C
+>>>>>>> c1945fda8cfd5607cd340410dea3a6da03d02e54
+D:/Figure_1.png
+E:/»—œ€“¿Õ»ﬂ/RL16/20.11.13/IUS16_17_11_13_n04_M06_p14C
+E:/»—œ€“¿Õ»ﬂ/KKP16/KKP16_18_01_2017_TM_k.mat
 D:/dev/Gravi/test3.txt
+D:/dev/Gravi/test2.txt
+D:/dev/Gravi/main_test.py
+D:/dev/Gravi/icon2.png
+D:/dev/Gravi/main.py
+D:/plot.log
+D:/dev/Gravi/test4.txt
+D:/dev/Gravi/info.txt
+D:/dev/Gravi/LoadDataFile.py
+D:/dev/training/test5.txt
+D:/dev/Gravi/ReadDataFile.py
 D:/dev
 D:/dev/Gravi
 /home/segrii/dev/Gravi/test1.txt

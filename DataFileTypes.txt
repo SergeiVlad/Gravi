@@ -42,4 +42,8 @@ types = {9: "hex"}
 
 UKNNS 71 columns
 -------------------
-F = {"Second","Tact", "Gx", "Gy", "Gz", "W", "Ax", "Ay", "Az","G","SS","DPmaxX", "DPminX", "Pk1x", "Umx", "LM_X", "t1x", "t2x", "t3x","DPmaxY", "DPminY", "Pk1y", "Umy", "LM_Y", "t1y", "t2y", "t3y","DPmaxZ", "DPminZ", "Pk1z", "Umz", "LM_Z", "t1z", "t2z", "t3z","UUS_TT1","UUS_TT2", "UUS_H", "UUS_M", "UUS_S", "tstAKx", "tstAKy", "undefined6", "undefined7", "undefined8", "tUUS", "tBPS", "SSbugX", "SSbugY", "SSbugZ", "SSbps", "SSuus", "N1", "N2", "T", "undefined1", "undefined2", "undefined3", "undefined4", "undefined5", "tAKx", "tAKy", "tAKz", "undefined6", "undefined7", "undefined8", "undefined9", "undefined10", "undefined11", "undefined12", "undefined13"}
+F = {1: "Second", 2: "Tact", 3: "Gx", 4: "Gy", 5: "Gz", 6: "W", 7: "Ax", 8: "Ay", 9: "Az", 10: "G", 11: "SS", 12: "DPmaxX", 13: "DPminX", 14: "Pk1x", 15: "Umx", 16: "LM_X", 17: "t1x", 18: "t2x", 19: "t3x", 20: "DPmaxY", 21: "DPminY", 22: "Pk1y", 23: "Umy", 24: "LM_Y", 25: "t1y", 26: "t2y", 27: "t3y", 28: "DPmaxZ", 29: "DPminZ", 30: "Pk1z", 31: "Umz", 32: "LM_Z", 33: "t1z", 34: "t2z", 35: "t3z", 36: "UUS_TT1", 37: "UUS_TT2", 38: "UUS_H", 39: "UUS_M", 40: "UUS_S", 41: "tstAKx", 42: "tstAKy", 43: "undefined6", 44: "undefined7", 45: "undefined8", 46: "tUUS", 47: "tBPS", 48: "SSbugX", 49: "SSbugY", 50: "SSbugZ", 51: "SSbps", 52: "SSuus", 53: "N1", 54: "N2", 55: "T", 56: "undefined1", 57: "undefined2", 58: "undefined3", 59: "undefined4", 60: "undefined5", 61: "tAKx", 62: "tAKy", 63: "tAKz", 64: "undefined6", 65: "undefined7", 66: "undefined8", 67: "undefined9", 68: "undefined10", 69: "undefined11", 70: "undefined12", 71: "undefined13", }
+
+RL16
+-------------
+F = {1: "Time", 2: "Gyro", 3: "dGyro"}

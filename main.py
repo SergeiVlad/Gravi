@@ -1,7 +1,7 @@
 import sys, os
 import ntpath
 from PyQt5.QtWidgets import (QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,
-                             QPushButton, QDesktopWidget, QTabWidget, QVBoxLayout, 
+                             QPushButton, QDesktopWidget, QTabWidget, QVBoxLayout, QHBoxLayout,
                              QMainWindow, QListWidget, QListWidgetItem)
 from PyQt5.QtGui import QIcon
 from LoadDataFile import LoadDataFile
@@ -11,7 +11,7 @@ class App(QMainWindow):
     def __init__(self):
         super().__init__()
         self.title = 'Gravi'
-        self.resize(250, 400)
+        self.resize(550, 400)
         self.setWindowTitle(self.title)
         self.setWindowIcon(QIcon('icon2.png'))
         self.center()
@@ -37,7 +37,6 @@ class MytableWidget(QWidget):
         self.tabs = QTabWidget()
         self.tab1 = QWidget()
         self.tab2 = QWidget()
-        self.tabs.resize(300, 200)
         self.filepath = ''
 
         # Add tabs
@@ -80,6 +79,20 @@ class MytableWidget(QWidget):
         self.layout.addWidget(self.tabs)
         self.setLayout(self.layout)
 
+        self.layout2 = QHBoxLayout()        
+        #Initialize tab screen
+        self.tabs_2 = QTabWidget()
+        self.tab1_2 = QWidget()
+        self.tab2_2 = QWidget()
+        self.tabs.resize(300, 200)
+        # Add tabs
+        self.tabs_2.addTab(self.tab1_2, "Files")
+        self.tabs_2.addTab(self.tab2_2, "Dir")
+        # Add tabs to widget
+        self.layout2.addWidget(self.tabs_2)
+        self.setLayout(self.layout2)
+
+
     def openFileNameDialog(self):
         # Get adress from tab lists:
         if self.tabs.tabText(self.tabs.currentIndex()) == 'Files':
@@ -90,13 +103,14 @@ class MytableWidget(QWidget):
         elif self.tabs.tabText(self.tabs.currentIndex()) == 'Dir':
             if self.lst2.currentItem():
                 fileName = self.lst2.currentItem().text()
+            else:
+                fileName = self.filepath
         # Check adress and set default dir if it not exist
         if not os.path.isfile(fileName) and not os.path.isdir(fileName):
             fileName = self.filepath
 
         # Load file 
         if os.path.isdir(fileName):
-            print('Crash! by open')
             fileName, _ = QFileDialog.getOpenFileName(self,"Select file for load", directory = fileName)
 
         # Get and sort history, refresh tab lists:
@@ -128,8 +142,17 @@ class MytableWidget(QWidget):
             path_history = getPathList(files_history)
             for curPath in path_history:
                 self.lst2.addItem(curPath)
-            A = LoadDataFile(fileName)
-            A.info()
+            try:
+                A = LoadDataFile(fileName)
+                A.info()
+            except:
+                print('Crash')
+            # ---------------------
+            # Processing data file:
+            if A.file_format['read'] == True:
+                # Create new TabWidget
+                pass
+
 
 def getPathList(files_history):
     """ Return path_history listh from files_history without repeated."""
