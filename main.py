@@ -13,7 +13,7 @@ class App(QMainWindow):
         self.title = 'Gravi'
         self.resize(550, 400)
         self.setWindowTitle(self.title)
-        self.setWindowIcon(QIcon('icon2.png'))
+        self.setWindowIcon(QIcon('icon.png'))
         self.center()
 
         self.tab_widget = MytableWidget(self)
