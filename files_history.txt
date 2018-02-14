@@ -1,11 +1,12 @@
+D:/dev/Gravi/test1.txt
+D:/dev/Gravi/test5.txt
+D:/dev/Gravi/test3.txt
 /home/segrii/dev/Gravi/test5.txt
 /home/segrii/dev/Gravi/test3.txt
 D:/dev/Gravi/test.JPG
-D:/dev/Gravi/test5.txt
 D:/dev/Gravi/DataFileTypes.txt
 D:/dev/Gravi/icon.png
 D:/Figure_1.png
-D:/dev/Gravi/test3.txt
 D:/dev/Gravi/test2.txt
 D:/dev/Gravi/main_test.py
 D:/dev/Gravi/icon2.png

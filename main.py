@@ -5,6 +5,8 @@ from PyQt5.QtWidgets import (QApplication, QWidget, QInputDialog, QLineEdit, QFi
                              QMainWindow, QListWidget, QListWidgetItem)
 from PyQt5.QtGui import QIcon
 from LoadDataFile import LoadDataFile
+from ViewData import ViewData
+
  
 class App(QMainWindow):
  
@@ -26,6 +28,7 @@ class App(QMainWindow):
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
+
 
 class MytableWidget(QWidget):
     """docstring for MytableWidget"""
@@ -55,25 +58,35 @@ class MytableWidget(QWidget):
 
         # Create tab 1
         self.tab1.layout = QVBoxLayout(self)
-        self.btn1 = QPushButton("Open")
+        self.btn1 = QPushButton("Info")
+        self.btn1.setObjectName("Info")
+        self.btn2 = QPushButton("View")
+        self.btn2.setObjectName("View")
         self.lst1 = QListWidget()
         for item in files_history:
             self.lst1.addItem(item)
         self.btn1.clicked.connect(self.openFileNameDialog)
+        self.btn2.clicked.connect(self.openFileNameDialog)
         self.tab1.layout.addWidget(self.lst1)
         self.tab1.layout.addWidget(self.btn1)
+        self.tab1.layout.addWidget(self.btn2)
         self.tab1.setLayout(self.tab1.layout)
 
         # Create tab 2
         self.tab2.layout = QVBoxLayout(self)
-        self.btn2 = QPushButton("Open")
+        self.btn1 = QPushButton("Info")
+        self.btn1.setObjectName("Info")
+        self.btn2 = QPushButton("View")
+        self.btn2.setObjectName("View")
         self.lst2 = QListWidget()
         for item in path_history:
             self.lst2.addItem(item)
+        self.btn1.clicked.connect(self.openFileNameDialog)
         self.btn2.clicked.connect(self.openFileNameDialog)
         self.tab2.layout.addWidget(self.lst2)
+        self.tab2.layout.addWidget(self.btn1)
         self.tab2.layout.addWidget(self.btn2)
-        self.tab2.setLayout(self.tab2.layout)    
+        self.tab2.setLayout(self.tab2.layout)
 
         # Add tabs to widget
         self.layout.addWidget(self.tabs)
@@ -142,16 +155,25 @@ class MytableWidget(QWidget):
             path_history = getPathList(files_history)
             for curPath in path_history:
                 self.lst2.addItem(curPath)
-            try:
-                A = LoadDataFile(fileName)
-                A.info()
-            except:
-                print('Crash')
-            # ---------------------
-            # Processing data file:
-            if A.file_format['read'] == True:
-                # Create new TabWidget
-                pass
+
+            # Processing file:
+            # ----------------------------------------------
+            current_button = self.sender()
+            if current_button.objectName() == "Info":
+                try:
+                    A = ScanDataFile.scan_file(fileName)
+                    ScanDataFile.info(A)
+                except:
+                    pass
+            # -----------------------------------------------
+            if current_button.objectName() == "View":
+                try:
+                    app = QApplication(sys.argv)
+                    data = LoadDataFile(fileName)
+                    ex = ViewData(data)
+                    sys.exit(app.exec_())
+                except:
+                    pass
 
 
 def getPathList(files_history):

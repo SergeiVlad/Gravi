@@ -10,17 +10,17 @@ from math import ceil
 
 class ViewData(QWidget):
     
-    def __init__(self):
+    def __init__(self, data):
         super().__init__()
-        
+        self.data = data
         self.initUI()
-        
+
     def initUI(self):
         
         grid = QGridLayout()
         self.setLayout(grid)
         self.setWindowIcon(QIcon('icon.png'))
-        self.data = LoadDataFile('test5.txt')
+        # self.data = LoadDataFile('test5.txt')
         names = self.data.file_format['names']
         max_row = 12
         columns = ceil(len(names)/max_row)
@@ -34,7 +34,7 @@ class ViewData(QWidget):
         for position, name, i in zip(positions, names, range(len(names))):
             if name == '':
                 continue
-            button = QPushButton(string(i)+'.'+name)
+            button = QPushButton(str(i+1)+'.'+name)
             button.setObjectName(name)
             button.clicked.connect(self.plotSignal)
             grid.addWidget(button, *position)
@@ -50,5 +50,6 @@ class ViewData(QWidget):
 if __name__ == '__main__':
     
     app = QApplication(sys.argv)
-    ex = ViewData()
+    data = LoadDataFile('test5.txt')
+    ex = ViewData(data)
     sys.exit(app.exec_())
