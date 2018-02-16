@@ -1,5 +1,6 @@
 """ Determine the type of the data file for choose features for its read."""
-
+import numpy as np
+import webbrowser
 import re
 
 def scan_file(fname):
@@ -282,8 +283,7 @@ def processing_option_strings(data_parameters, options_strings):
 	return data_parameters
 
 def checkDataTypes(D, options_strings):
-	"""
-	Check data types that was defined early, by read options from DataFileTypes.
+	""" Check data types that was defined early, by read options from DataFileTypes.
 	
 	If DataFileTypes have options 'types' under current format name in next format:
 		types = {6: 'hex'}
@@ -295,6 +295,7 @@ def checkDataTypes(D, options_strings):
 	Returns:
 		formats: list with data types for refresh D['types']
 	"""
+
 	# initial data
 	name_f = D['format']
 	types = D['types']
@@ -313,9 +314,8 @@ def checkDataTypes(D, options_strings):
 	return types
 
 def types_recognize(line):
-	"""
-	Return list with type names of the recognized data.
-	"""
+	""" Return list with type names of the recognized data."""
+
 	types_list = []
 
 	ln_spl = line.split()
@@ -342,9 +342,8 @@ def types_recognize(line):
 	return types_list
 
 def calc_type_list(types_list):
-	"""
-	Return dictionary with result of calculate each type of data from type_list.
-	"""
+	""" Return dictionary with result of calculate each type of data from type_list."""
+
 	# initialisation type_calc:
 	type_calc = {'str':0, 'int':0, 'float':0, 'hex':0}
 
@@ -371,9 +370,97 @@ def calc_type_list(types_list):
 	return type_calc	
 
 def analyze_line_types(line):
-	"""
-	Analyze_types function get data line and return dict with types guantity.
-	"""
+	""" Analyze_types function get data line and return dict with types guantity. """
 	types_list = types_recognize(line)
 	types_count = calc_type_list(types_list)
 	return types_count
+
+
+def info(data):
+	""" Show data information in the default TextEditor. """
+	
+	with open('info.txt','w') as f:
+		f.write('adress:\t%s\n' % (data['filename']))
+		f.write('format:\t%s\n' % (data['format']))
+		f.write('%-s\t%-s\n' % ('rows:',data['row']))
+		f.write('%-s\t%-s\n' % ('columns:',data['col']))
+		f.write('%-s\t%-s\n' % ('frequency:',data['tact_fq']))
+		f.write('%-s\t%-s\n' % ('head rows:',data['nhead']))
+		if data['read']:
+			f.write('%-s\t%-s\n' % ('readability:','True'))
+		else:
+			f.write('%-s\t%-s\n' % ('readability:','False'))
+		if 'names' in data:
+			f.write('%s\t%-s\n'% ('data names: ',data['names']))
+		if 'types' in data:
+			f.write('%s\t%-s\n'% ('data types: ',data['types']))
+		if 'names' in data:
+			f.write('%s\n' % 'String for DataFileTypes.txt:')	
+			f.write('F = {')
+			for i, name in enumerate(data['names']):
+				f.write('%d: "%s", ' % (i+1, name) )
+			f.write('}\n')
+		f.write('%-s\n' % ('-------------------------------'))
+		if 'parameters' in data:
+			if isinstance(data['parameters'], dict):
+				f.write('%s\n' % 'parameters:')
+				for i in data['parameters'].keys():
+					f.write('\t%-s:\t%-s\n' % (i, data['parameters'][i]))
+			else:
+				f.write('%s\n' % 'parameters:')
+				f.write('\t%s\n' % 'not parameters.')
+		try:
+			f.write('%-s\n' % ('-------------------------------'))
+			f.write('%s\n' % 'first rows:')
+			f.write('%-s\n' % ('============='))
+			with open(data['filename']) as b:
+				i = 0
+				while i < data['col'] or i < 100:
+					s = b.readline()
+					f.write('%-s' % s)
+					i += 1
+		except: 
+			f.write('%s\n' % 'stop reading file:')
+			f.write('\t%s' % 'unreadable rows.')
+
+		webbrowser.open('info.txt')
+
+
+def read_file(format_file):
+	"""
+	Read data from file, work only with ScanDataFile output. Sort data by signal names ind dict data. 
+
+	Args:
+		format_file: Dictionary from ScanDataFile methods.  
+	Returns:
+		data: Dictionary with data vectors.  
+	"""
+	data = {}
+
+	if type(format_file) != dict: 
+		return []
+	
+	if format_file['read']:
+		names = format_file['names']
+		types = format_file['types']
+		
+		# Define lambdas for convertor.  
+		hex2int = lambda x: int(x,16)
+
+		# build hex convertor
+		conv = {}
+		for i, ttype in enumerate(types):
+			if ttype == 'hex':
+				conv[i] = hex2int
+
+		# import pdb; pdb.set_trace()
+		# Read data from file.  
+		D = np.loadtxt(format_file['filename'], skiprows = format_file['nhead'], converters = conv) 
+
+		for index, (name, ttype) in enumerate (zip(names, types)):
+			if ttype == 'int' or ttype == 'hex':
+				data[name] = D[:,index].astype(int)
+			else:
+				data[name] = D[:,index]
+
+	return data

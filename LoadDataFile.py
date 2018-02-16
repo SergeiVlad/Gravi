@@ -1,14 +1,15 @@
 """ Load sensors data from files to RAM."""
 
 import os
-import ScanDataFile, ReadDataFile
+import ScanDataFile
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog
 import webbrowser
 import matplotlib.pyplot as plt
 
+
 class LoadDataFile:
-	""" Provides load data from file to RAM.  """
+	""" Provides load data from file to RAM. """
 	adress = ''
 	file_format = None
 	data = None
@@ -24,13 +25,14 @@ class LoadDataFile:
 		self.file_format = ScanDataFile.scan_file(self.adress)
 		# Reading data
 		if self.file_format['read']:
-			self.data = ReadDataFile.read(self.file_format)
+			self.data = ScanDataFile.read_file(self.file_format)
+
 
 	def open_file_GUI(self, arg):
 		"""  Call GUI OpenFileDialog and return the correct pathname.  
 
 		Args:
-			arg: File name, or path, or empty.
+			arg: File name, or path, or  .
 		Returns:
 			fname: Absolute path for acces to data file.
 		"""
@@ -53,63 +55,12 @@ class LoadDataFile:
 
 		return fname
 
-	def info(self):
-		"""
-		Show data information in the default TextEditor.
-		"""
-		data = self.file_format
-		with open('info.txt','w') as f:
-			f.write('adress:\t%s\n' % (self.adress))
-			f.write('format:\t%s\n' % (data['format']))
-			f.write('%-s\t%-s\n' % ('rows:',data['row']))
-			f.write('%-s\t%-s\n' % ('columns:',data['col']))
-			f.write('%-s\t%-s\n' % ('frequency:',data['tact_fq']))
-			f.write('%-s\t%-s\n' % ('head rows:',data['nhead']))
-			if data['read']:
-				f.write('%-s\t%-s\n' % ('readability:','True'))
-			else:
-				f.write('%-s\t%-s\n' % ('readability:','False'))
-			if 'names' in data:
-				f.write('%s\t%-s\n'% ('data names: ',data['names']))
-			if 'types' in data:
-				f.write('%s\t%-s\n'% ('data types: ',data['types']))
-			if 'names' in data:
-				f.write('%s\n' % 'String for DataFileTypes.txt:')	
-				f.write('F = {')
-				for i, name in enumerate(data['names']):
-					f.write('%d: "%s", ' % (i+1, name) )
-				f.write('}\n')
-			f.write('%-s\n' % ('-------------------------------'))
-			if 'parameters' in data:
-				if isinstance(data['parameters'], dict):
-					f.write('%s\n' % 'parameters:')
-					for i in data['parameters'].keys():
-						f.write('\t%-s:\t%-s\n' % (i, data['parameters'][i]))
-				else:
-					f.write('%s\n' % 'parameters:')
-					f.write('\t%s\n' % 'not parameters.')
-			try:
-				f.write('%-s\n' % ('-------------------------------'))
-				f.write('%s\n' % 'first rows:')
-				f.write('%-s\n' % ('============='))
-				with open(data['filename']) as b:
-					i = 0
-					while i < data['col'] or i < 100:
-						s = b.readline()
-						f.write('%-s' % s)
-						i += 1
-			except: 
-				f.write('%s\n' % 'stop reading file:')
-				f.write('\t%s' % 'unreadable rows.')
-
-			webbrowser.open('info.txt')
 
 	def set_param(self):
-		"""
-		Open DataFileTypes.txt for edit and save new parameters.
-		"""
+		""" Open DataFileTypes.txt for edit and save new parameters. """
 		webbrowser.open('DataFileTypes.txt')
 		self = self.__init__(self.adress)
+
 
 	def get(self,signal):
 		""" Get data vector by signal name.  
@@ -119,11 +70,11 @@ class LoadDataFile:
 		"""
 		return self.data[signal]
 
+
 	def signals(self):
-		"""
-		Show all available signals in shell.
-		"""
+		""" Show all available signals in shell. """
 		print(self.file_format['names'])
+
 
 	def plot(self, signal):
 		"""
@@ -147,3 +98,9 @@ class LoadDataFile:
 				ax[i].grid(True)
 
 		plt.show()
+
+
+	def info(self):
+		""" Show data information in the default TextEditor. """
+
+		return ScanDataFile.info(self.file_format)
