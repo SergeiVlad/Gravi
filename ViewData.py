@@ -40,8 +40,7 @@ class ViewData(QWidget):
             grid.addWidget(button, *position)
             
         self.move(300, 150)
-        self.setWindowTitle('Signal View')
-        self.show()
+        self.setWindowTitle(self.data.file_format['filename'])
     
     def plotSignal(self):
         current_button = self.sender()
@@ -52,4 +51,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     data = LoadDataFile('test5.txt')
     ex = ViewData(data)
+    ex.show()
     sys.exit(app.exec_())

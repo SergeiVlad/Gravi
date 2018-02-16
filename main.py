@@ -2,9 +2,10 @@ import sys, os
 import ntpath
 from PyQt5.QtWidgets import (QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog,
                              QPushButton, QDesktopWidget, QTabWidget, QVBoxLayout, QHBoxLayout,
-                             QMainWindow, QListWidget, QListWidgetItem)
+                             QMainWindow, QListWidget, QListWidgetItem, QErrorMessage)
 from PyQt5.QtGui import QIcon
 from LoadDataFile import LoadDataFile
+import ScanDataFile
 from ViewData import ViewData
 
  
@@ -167,13 +168,14 @@ class MytableWidget(QWidget):
                     pass
             # -----------------------------------------------
             if current_button.objectName() == "View":
-                try:
-                    app = QApplication(sys.argv)
-                    data = LoadDataFile(fileName)
-                    ex = ViewData(data)
-                    sys.exit(app.exec_())
-                except:
-                    pass
+                A = LoadDataFile(fileName)
+                if A.file_format['read']:
+                    self.wnd = ViewData(A)
+                    self.wnd.initUI()
+                    self.wnd.show()
+                else:
+                    err = QErrorMessage(self)
+                    err.showMessage('Unreadable format of the file.')
 
 
 def getPathList(files_history):
