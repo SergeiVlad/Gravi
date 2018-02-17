@@ -84,8 +84,8 @@ class LoadDataFile:
 			signal - string signal name
 			signal - list with signals names
 		"""
-		# import pdb; pdb.set_trace()
 		if type(signal) == str:
+			plt.figure()
 			plt.plot(self.data[signal])
 			plt.grid(True)
 			plt.title(signal)
