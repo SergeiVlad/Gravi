@@ -13,13 +13,13 @@ def scan_file(fname):
 		D: dictionary with fields:
 			filename - pathname for data access
 			read - if True file could be read for processing, in other case - not
+			delim - delimiter  
 			col - number of columns
 			row - number of rows
 			nhead - number of head string
 			coleq - show equal or not all strings, if coleq = true it mean that all strings are equal in the another case there are two type strings in data file: total and tact strings.
 			tactf - show how many times occurs such string in relate to the total string. For example tactf = 200 mean that each 200th string will be a total. tact_col > 1 
 			freq - show record frequency of the data
-			sep - separator. Defautl separator jis \\t
 			hex - if hexadecimal numbers are present in data
 			types - list of the each rows types.
 			names - names of the signals
@@ -29,13 +29,13 @@ def scan_file(fname):
 	# initialisation D:
 	D = {'filename':'',
 		'read':False,
+		'delim':None,
 		'col':0,
 		'row':0,
 		'format':'Undefined',
 		'nhead':0, 
 		'coleq':True, 
 		'tact_fq':0, 
-		'sep':'\\t',
 		'hex':False,
 		'types':list(),
 		'names':[],
@@ -58,14 +58,16 @@ def scan_file(fname):
 	elif D['row'] <= max_head:
 		max_head = D['row']
 
+
+
 	# Head recognize:
 	# --------------------------------------------------
 	with open(fname) as f:
 		line = f.readline()
-		types_list = types_recognize(line)
-		types_count = analyze_line_types(line)
+		types_list = types_recognize(line,D['delim'])
+		types_count = analyze_line_types(line,D['delim'])
 		types_count_prev = types_count
-		for i in range(max_head-1):
+		for i in range(max_head):
 			# conditions for define head strings
 			condition_1 = types_count['str'] > 0  # if line have any strings
 			condition_2 = line == '\n'			  # if line is empty
@@ -79,14 +81,29 @@ def scan_file(fname):
 				# import pdb; pdb.set_trace()
 			types_count_prev = types_count
 			line = f.readline()
-			types_list = types_recognize(line)
-			types_count = analyze_line_types(line)
+			types_list = types_recognize(line,D['delim'])
+			types_count = analyze_line_types(line,D['delim'])
 
-	if D['nhead'] == max_head or D['nhead'] > 15:
-		D['read'] = False
-		return D
+	if D['nhead'] == max_head:
+	# Delimeter recognize:
+	# --------------------------------------------------
+		# try tp split data with delimiter "," 
+		with open(fname) as f:
+			res = []
+			for i in range(max_head):
+				line = f.readline()
+				res.append(len(line.split(',')))
+		b = list(i == res[-1] for i in res)
+		if all(b):
+			D['delim'] = ','
+			D['read'] = True
+			D['nhead'] = 0
+		else:
+			D['read'] = False
+			return D
 	else:
 		D['read'] = True
+
 
 	# Hexadecimal recognize 
 	# --------------------------------------------------
@@ -94,7 +111,7 @@ def scan_file(fname):
 		# skip head lines if it exist in file: 
 		for i in range(D['nhead']):
 			f.readline()
-		t = analyze_line_types(f.readline())
+		t = analyze_line_types(f.readline(),D['delim'])
 		if t['hex'] > 0:
 			D['hex'] = True
 
@@ -107,20 +124,14 @@ def scan_file(fname):
 		nLines = 20
 		# get types list by first data line
 		line_str = f.readline()
-		types_lst_1 = types_recognize(line_str)
+		types_lst_1 = types_recognize(line_str,D['delim'])
 		D['col'] = len(types_lst_1)
 		D['types'] = types_lst_1
 		# find hex types that was hinden in first lines:
 		# define number of the lines for testing for hiden hex
 		if D['row'] < nLines + D['nhead']:
 			nLines = D['row'] - D['nhead']
-		# find types list with addition hex types
-		# for line in range(nLines):
-		# 	line_str = f.readline()
-		# 	types_lst = types_recognize(line_str)
 
-		# 	D['col'] = len(types_lst)
-		# 	D['types'] = types_lst
 
 	# Ecuality in nQ columns recognize
 	# --------------------------------------------------
@@ -137,7 +148,7 @@ def scan_file(fname):
 			ls_uneq.append(D['col'])
 
 			for i in range(nQ):
-				types_lst = types_recognize(f.readline())
+				types_lst = types_recognize(f.readline(),D['delim'])
 				if len(types_lst) != D['col']:
 					D['coleq'] = False
 					n_uneq_lines += 1
@@ -313,12 +324,12 @@ def checkDataTypes(D, options_strings):
 
 	return types
 
-def types_recognize(line):
+def types_recognize(line,delim):
 	""" Return list with type names of the recognized data."""
 
 	types_list = []
 
-	ln_spl = line.split()
+	ln_spl = line.split(delim)
 
 	for i in range(len(ln_spl)):
 
@@ -369,9 +380,9 @@ def calc_type_list(types_list):
 
 	return type_calc	
 
-def analyze_line_types(line):
+def analyze_line_types(line,delim):
 	""" Analyze_types function get data line and return dict with types guantity. """
-	types_list = types_recognize(line)
+	types_list = types_recognize(line,delim)
 	types_count = calc_type_list(types_list)
 	return types_count
 
@@ -443,6 +454,7 @@ def read_file(format_file):
 	if format_file['read']:
 		names = format_file['names']
 		types = format_file['types']
+		delim = format_file['delim']
 		
 		# Define lambdas for convertor.  
 		hex2int = lambda x: int(x,16)
@@ -455,7 +467,7 @@ def read_file(format_file):
 
 		# import pdb; pdb.set_trace()
 		# Read data from file.  
-		D = np.loadtxt(format_file['filename'], skiprows = format_file['nhead'], converters = conv) 
+		D = np.loadtxt(format_file['filename'], skiprows = format_file['nhead'], converters = conv, delimiter = delim)
 
 		for index, (name, ttype) in enumerate (zip(names, types)):
 			if ttype == 'int' or ttype == 'hex':

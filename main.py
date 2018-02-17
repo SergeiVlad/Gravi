@@ -168,14 +168,18 @@ class MytableWidget(QWidget):
                     pass
             # -----------------------------------------------
             if current_button.objectName() == "View":
-                A = LoadDataFile(fileName)
-                if A.file_format['read']:
-                    self.wnd = ViewData(A)
-                    self.wnd.initUI()
-                    self.wnd.show()
-                else:
+            	try:
+	                A = LoadDataFile(fileName)
+	                if A.file_format['read']:
+	                    self.wnd = ViewData(A)
+	                    self.wnd.initUI()
+	                    self.wnd.show()
+	                else:
+	                    err = QErrorMessage(self)
+	                    err.showMessage('Unreadable format of the file.')
+            	except:
                     err = QErrorMessage(self)
-                    err.showMessage('Unreadable format of the file.')
+                    err.showMessage('Can not read this file.')
 
 
 def getPathList(files_history):
