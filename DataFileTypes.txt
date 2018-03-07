@@ -52,3 +52,9 @@ Old kkp format 1s with TM
 -------------
 F = {1: "Second", 2: "Gx", 3: "Gy", 4: "Gz", 5: "W", 6: "Ax", 7: "Ay", 8: "Az", 9: "G", 10: "SS", 11: "DOUSx", 12: "mDOUSx", 13: "Ip1x", 14: "Ip2x", 15: "Pk1x", 16: "Pk2x", 17: "Umx", 18: "t1x", 19: "t2x", 20: "t3x", 21: "DOUSy", 22: "mDOUSy", 23: "Ip1y", 24: "Ip2y", 25: "Pk1y", 26: "Pk2y", 27: "Umy", 28: "t1y", 29: "t2y", 30: "t3y", 31: "DOUSz", 32: "mDOUSz", 33: "Ip1z", 34: "Ip2z", 35: "Pk1z", 36: "Pk2z", 37: "Umz", 38: "t1z", 39: "t2z", 40: "t3z", 41: "Akgx", 42: "Akgy", 43: "Akgz", 44: "Takx", 45: "Taky", 46: "Takz", 47: "Tt", 48: "DD1", 49: "DD2", 50: "tBPD", 51: "dfx", 52: "dfy", 53: "dfz", 54: "SSuus", 55: "SSbug", 56: "SSbps", 57: "TBPSAK"}
 All: SF = 1, b0 = 0
+
+CVG25
+-------------
+F = {1: "GyroOut", 2: "Temperature", 3: "Frequency", 4: "ExcitationAmpl", 5: "QuadratureAmpl", 6: "RAW_GyroOut", 7: "RAW_ExcitationAmpl", 8: "RAW_QuadratureAmpl", 9: "GyroOut_corr_st1", 10: "XAmplitude", 11: "YAmplitude", 12: "XPhase", 13: "YPhase", 14: "Error_(Coriolis)", 15: "Error_(Quadrature)", 16: "Error_(Frequency)"}
+
+             

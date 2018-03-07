@@ -6,6 +6,7 @@ import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QFileDialog
 import webbrowser
 import matplotlib.pyplot as plt
+from moving_average import *
 
 
 class LoadDataFile:
@@ -87,6 +88,7 @@ class LoadDataFile:
 		if type(signal) == str:
 			plt.figure()
 			plt.plot(self.data[signal])
+			plt.plot(moving_average(self.data[signal],100))
 			plt.grid(True)
 			plt.title(signal)
 		elif type(signal) == list:
