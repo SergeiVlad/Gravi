@@ -3,8 +3,8 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QSplitter, QDesktopWidge
 							 QHBoxLayout, QSplitter, QFrame, QSplitter, QStyleFactory,
 							 QTextEdit,QWidget,QVBoxLayout,QSlider,QLineEdit,
 							 QLabel,QGridLayout,QPushButton,QTextEdit,QTabWidget,qApp,
-							 QAction,QMenu,QTreeView)
-from PyQt5.QtGui import QIcon
+							 QAction,QMenu,QTreeView,QListWidget,QComboBox)
+from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
 from LoadDataFile import LoadDataFile
 from PyQt5.QtCore import Qt
 
@@ -19,7 +19,7 @@ class AnalyzerMain(QMainWindow):
 		self.setWindowTitle(self.title)
 		self.setWindowIcon(QIcon('icon.png'))
 		self.center()
-		self.statusBar().showMessage('Program under development')
+		self.statusBar().showMessage('Project under development')
 
 		# Menu Bar
 		# ---------------------------
@@ -126,12 +126,104 @@ class AnalyzerWidget(QWidget):
 		controlFrame.setLineWidth(2)
 		control_tab = QTabWidget()
 		cTab1 = QWidget()
-		cTab2 = QWidget()
-		cTab3 = QWidget()
 
-		control_tab.addTab(cTab1,'Browser')
-		control_tab.addTab(cTab2,'Work')
+		# Tab Browser
+		# ------------------------
+		cLayout = QVBoxLayout()
+		lst_file = QListWidget()
+		lst_file.addItem('Not files yet')
+		lst_file.addItem('Not files yet')
+		lst_file.addItem('Not files yet')
+		lst_dir = QListWidget()
+		lst_dir.addItem('Not dirs yet')
+		lst_dir.addItem('Not dirs yet')
+		lst_dir.addItem('Not dirs yet')
+		tab_files = QTabWidget()
+		tab_files.addTab(lst_file,'Files')
+		tab_files.addTab(lst_dir,'Directories')
+		cLayout_btn = QHBoxLayout()
+		btn_load = QPushButton('Load')
+		btn_info = QPushButton('Info')
+		btn_prev = QPushButton('Preview')
+		cLayout_btn.addWidget(btn_load)
+		cLayout_btn.addWidget(btn_info)
+		cLayout_btn.addWidget(btn_prev)
+		lbl_hist = QLabel('Load data files history')
+		lbl_obj = QLabel('Loaded objects')
+		
+		b_tree = QTreeView()
+		b_tree.setAlternatingRowColors(True)
+		b_tree_model = QStandardItemModel(0,5)
+		b_tree_node = b_tree_model.invisibleRootItem()
+		branch1 = QStandardItem("a")
+		branch1.appendRow([QStandardItem("Child A"),None])
+		childNode = QStandardItem("Child B")
+		branch1.appendRow([childNode, None])
+		branch2 = QStandardItem("b")
+		branch2.appendRow([QStandardItem("Child C"),None])
+		branch2.appendRow([QStandardItem("Child D"),None])
+		branch3 = QStandardItem('c')
+		branch4 = QStandardItem('d')
+
+		b_tree_node.appendRow([ branch1, None])
+		b_tree_node.appendRow([ branch2, None])
+		b_tree_node.appendRow([ branch3, None])
+		b_tree_node.appendRow([ branch4, None])
+
+		b_tree.setModel(b_tree_model)
+		b_tree_model.setHeaderData(0, Qt.Horizontal, 'Name')
+		b_tree_model.setHeaderData(1, Qt.Horizontal, 'Type')
+		b_tree_model.setHeaderData(2, Qt.Horizontal, 'Data')
+		b_tree_model.setHeaderData(3, Qt.Horizontal, 'Size')
+		b_tree_model.setHeaderData(4, Qt.Horizontal, 'Modified')
+		b_tree.setColumnWidth(0,70)
+
+		cLayout.addWidget(lbl_hist)
+		cLayout.addWidget(tab_files)
+		cLayout.addLayout(cLayout_btn)
+		cLayout.addWidget(lbl_obj)
+		cLayout.addWidget(b_tree)
+		cFrame1 = QFrame()
+		cFrame1.setLayout(cLayout)
+		control_tab.addTab(cFrame1,'Browser')
+
+		# Tab Work
+		# -------------------------------
+		wFrame1 = QFrame()
+		wLayout = QGridLayout()
+		wLbl_proc = QLabel('Process type')
+		wComboBox1 = QComboBox()
+		w_list = ["Signal view","Differentiation","Integration","Correlation",
+				  "Allan variance","Fitting","Termo compensations","Calibration",
+				  "Navigation","Fourier transform"]
+		wComboBox1.setStyleSheet(self.stylesheet_combo2())
+		wComboBox1.addItems(w_list)
+
+		wFrame2 = QFrame()
+		wFrame2.setFrameShape(QFrame.Box)
+		wLayout.addWidget(wLbl_proc,0,0,1,1)
+		wLayout.addWidget(wComboBox1,1,0,1,1)
+		wLayout.addWidget(wFrame2,2,0,35,1)
+			# Frame 2
+		wLayout2 = QHBoxLayout()
+		wLayout2.addWidget(QPushButton('one'))
+		wLayout2.addWidget(QPushButton('two'))
+		wLayout2.addWidget(QPushButton('three'))
+		wLayout2.addWidget(QPushButton('four'))
+		wLayout2.addWidget(QPushButton('five'))
+		wLayout2.setAlignment(Qt.AlignTop)
+		wLayout2.setSpacing(0)
+		wFrame2.setLayout(wLayout2)
+
+		wLayout.setContentsMargins(1,1,1,1)
+		wFrame1.setLayout(wLayout)
+		control_tab.addTab(wFrame1,'Work')
+		
+		# Tab Model
+		# -------------------------------
+		cTab3 = QWidget()
 		control_tab.addTab(cTab3,'Model')
+
 		control_layout = QVBoxLayout()
 		control_layout.addWidget(control_tab)
 		control_layout.setContentsMargins(0,0,0,0)
@@ -217,6 +309,73 @@ class AnalyzerWidget(QWidget):
 	            border-radius: 3px;
 	        }
 	    """
+
+	def stylesheet_combo(self):
+		return """
+			QComboBox {
+			     border: 1px solid gray;
+			     border-radius: 3px;
+			     padding: 1px 18px 1px 3px;
+			     min-width: 6em;
+			 }
+
+			 QComboBox:editable {
+			     background: white;
+			 }
+
+			 QComboBox:!editable, QComboBox::drop-down:editable {
+			      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+			                                  stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
+			                                  stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+			 }
+
+			 /* QComboBox gets the "on" state when the popup is open */
+			 QComboBox:!editable:on, QComboBox::drop-down:editable:on {
+			     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+			                                 stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,
+			                                 stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);
+			 }
+
+			 QComboBox:on { /* shift the text when the popup opens */
+			     padding-top: 3px;
+			     padding-left: 4px;
+			 }
+
+			 QComboBox::drop-down {
+			     subcontrol-origin: padding;
+			     subcontrol-position: top right;
+			     width: 15px;
+
+			     border-left-width: 1px;
+			     border-left-color: darkgray;
+			     border-left-style: solid; /* just a single line */
+			     border-top-right-radius: 3px; /* same radius as the QComboBox */
+			     border-bottom-right-radius: 3px;
+			 }
+
+			 QComboBox::down-arrow {
+			     image: url(/usr/share/icons/crystalsvg/16x16/actions/1downarrow.png);
+			 }
+
+			 QComboBox::down-arrow:on { /* shift the arrow when popup is open */
+			     top: 1px;
+			     left: 1px;
+			 }
+		"""
+
+	def stylesheet_combo2(self):
+		return """
+			QComboBox QAbstractItemView {
+				border: 2px solid darkgray;
+				selection-background-color: lightgray;
+			}
+		"""
+
+
+
+
+
+
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
