@@ -7,6 +7,10 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QSplitter, QDesktopWidge
 from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
 from LoadDataFile import LoadDataFile
 from PyQt5.QtCore import Qt
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+import matplotlib.pyplot as plt
+import random
+import numpy as np
 
 class AnalyzerMain(QMainWindow):
 	def __init__(self):
@@ -79,6 +83,24 @@ class AnalyzerWidget(QWidget):
 		# 1. Plot frame:
 		plotFrame = QFrame()
 		plotFrame.setFrameShape(QFrame.Panel| QFrame.Raised)
+		plotFrame.setStyleSheet(self.stylesheet_qframe1())
+		figure = plt.figure()
+		canvas = FigureCanvas(figure)
+		ln = 10000;
+		data = [random.random() for i in range(ln)]
+		data = np.cumsum(data-np.mean(data))
+		ax = figure.add_subplot(111)
+		plt.subplots_adjust(left=0.00,bottom=0.002,right=1,top=1,wspace=0,hspace=0)
+		ax.plot(data)
+		ax.grid()
+		ax.set_facecolor('#C4C4C4')
+		ax.grid(color='#B80C09',linestyle = ':')
+		plt.xlim([0,len(data)])
+		canvas.draw()
+		pLayout = QVBoxLayout()
+		pLayout.addWidget(canvas)
+		plotFrame.setLayout(pLayout)
+		plotFrame.setContentsMargins(0,0,0,0)
 
 		# 2. Horizontal sliders frame:
 		sHbox = QVBoxLayout()
@@ -89,7 +111,7 @@ class AnalyzerWidget(QWidget):
 		sHbox.addWidget(slider1h)
 		sHbox.addWidget(slider2h)
 		sHbox.setSpacing(0)
-		sHbox.setContentsMargins(1, 0, 1, 0)
+		sHbox.setContentsMargins(1,0,1,0)
 		sFrameH = QFrame()
 		sFrameH.setFrameShape(QFrame.Panel | QFrame.Raised)
 		sFrameH.setLayout(sHbox)
@@ -209,8 +231,6 @@ class AnalyzerWidget(QWidget):
 		wLayout2.addWidget(QPushButton('one'))
 		wLayout2.addWidget(QPushButton('two'))
 		wLayout2.addWidget(QPushButton('three'))
-		wLayout2.addWidget(QPushButton('four'))
-		wLayout2.addWidget(QPushButton('five'))
 		wLayout2.setAlignment(Qt.AlignTop)
 		wLayout2.setSpacing(0)
 		wFrame2.setLayout(wLayout2)
@@ -230,7 +250,7 @@ class AnalyzerWidget(QWidget):
 		controlFrame.setLayout(control_layout)
 		
 		# 6. Log panel:
-		LogEdit = QTextEdit()
+		LogEdit = QTextEdit('>>')
 
 		# -----------------------------
 		# Split frames
@@ -372,7 +392,19 @@ class AnalyzerWidget(QWidget):
 		"""
 
 
-
+	def stylesheet_qframe1(self):
+		return """
+			QFrame::layout { margin: 0px }
+			 
+			QFrame {
+				margin-top: 0px;
+				margin-right: 0px;
+				margin-bottom: 0px;
+				margin-left: 0px;
+				spacing: 0px;
+				padding: 0px;
+			}
+		"""
 
 
 

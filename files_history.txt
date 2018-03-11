@@ -1,5 +1,8 @@
-/home/segrii/dev/Gravi/test1.txt
 /home/segrii/dev/Gravi/test5.txt
+/media/segrii/Transcend/TEST/CVG25/stat1.txt
+/media/segrii/Transcend/TEST/CVG25/run4.jpg
+/media/segrii/Transcend/TEST/CVG25/run5.jpg
+/home/segrii/dev/Gravi/test1.txt
 /home/segrii/dev/Gravi/test4.txt
 D:/dev/Gravi/icon.png
 D:/Figure_1.png
