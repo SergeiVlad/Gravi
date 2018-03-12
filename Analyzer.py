@@ -86,7 +86,7 @@ class AnalyzerWidget(QWidget):
 		plotFrame.setStyleSheet(self.stylesheet_qframe1())
 		figure = plt.figure()
 		canvas = FigureCanvas(figure)
-		ln = 10000;
+		ln = 100000;
 		data = [random.random() for i in range(ln)]
 		data = np.cumsum(data-np.mean(data))
 		ax = figure.add_subplot(111)
@@ -151,7 +151,8 @@ class AnalyzerWidget(QWidget):
 
 		# Tab Browser
 		# ------------------------
-		cLayout = QVBoxLayout()
+		cLayout1 = QVBoxLayout()
+		cFrame1 = QFrame()
 		lst_file = QListWidget()
 		lst_file.addItem('Not files yet')
 		lst_file.addItem('Not files yet')
@@ -171,8 +172,14 @@ class AnalyzerWidget(QWidget):
 		cLayout_btn.addWidget(btn_info)
 		cLayout_btn.addWidget(btn_prev)
 		lbl_hist = QLabel('Load data files history')
-		lbl_obj = QLabel('Loaded objects')
+		cLayout1.addWidget(lbl_hist)
+		cLayout1.addWidget(tab_files)
+		cLayout1.addLayout(cLayout_btn)
+		cFrame1.setLayout(cLayout1)
+
+
 		
+		lbl_obj = QLabel('Loaded objects')
 		b_tree = QTreeView()
 		b_tree.setAlternatingRowColors(True)
 		b_tree_model = QStandardItemModel(0,5)
@@ -200,14 +207,26 @@ class AnalyzerWidget(QWidget):
 		b_tree_model.setHeaderData(4, Qt.Horizontal, 'Modified')
 		b_tree.setColumnWidth(0,70)
 
-		cLayout.addWidget(lbl_hist)
-		cLayout.addWidget(tab_files)
-		cLayout.addLayout(cLayout_btn)
-		cLayout.addWidget(lbl_obj)
-		cLayout.addWidget(b_tree)
-		cFrame1 = QFrame()
-		cFrame1.setLayout(cLayout)
-		control_tab.addTab(cFrame1,'Browser')
+		cLayout2 = QVBoxLayout()
+		cLayout2.addWidget(lbl_obj)
+		cLayout2.addWidget(b_tree)
+		cFrame2 = QFrame()
+		cFrame2.setLayout(cLayout2)
+
+		cSplitBrowser = QSplitter(Qt.Vertical)
+
+		cSplitBrowser.addWidget(cFrame1)
+		cSplitBrowser.addWidget(cFrame2)
+		cSplitBrowser.setSizes([200,50])
+
+		cLayout = QVBoxLayout()
+		cLayout.addWidget(cSplitBrowser)
+		cLayout.setContentsMargins(0,0,0,0)
+
+		# cLayout.addWidget(cFrame2)
+		cFrame = QFrame()
+		cFrame.setLayout(cLayout)
+		control_tab.addTab(cFrame,'Browser')
 
 		# Tab Work
 		# -------------------------------
