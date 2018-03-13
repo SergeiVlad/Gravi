@@ -1,9 +1,10 @@
-import sys
+import sys, os
+import ntpath
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QSplitter, QDesktopWidget,
 							 QHBoxLayout, QSplitter, QFrame, QSplitter, QStyleFactory,
 							 QTextEdit,QWidget,QVBoxLayout,QSlider,QLineEdit,
 							 QLabel,QGridLayout,QPushButton,QTextEdit,QTabWidget,qApp,
-							 QAction,QMenu,QTreeView,QListWidget,QComboBox)
+							 QAction,QMenu,QTreeView,QListWidget,QComboBox, QFileDialog)
 from PyQt5.QtGui import QIcon, QStandardItem, QStandardItemModel
 from LoadDataFile import LoadDataFile
 from PyQt5.QtCore import Qt
@@ -11,6 +12,9 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import matplotlib.pyplot as plt
 import random
 import numpy as np
+from LoadDataFile import LoadDataFile
+import ScanDataFile
+from ViewData import ViewData
 
 class AnalyzerMain(QMainWindow):
 	def __init__(self):
@@ -44,7 +48,6 @@ class AnalyzerMain(QMainWindow):
 		ExitMenu = menuBar.addMenu('Exit')
 		mExit = QAction('Quit without save session',self)
 		ExitMenu.addAction(mExit)
-
 
 		# Tool Bar:
 		# ---------------------------
@@ -153,31 +156,45 @@ class AnalyzerWidget(QWidget):
 		# ------------------------
 		cLayout1 = QVBoxLayout()
 		cFrame1 = QFrame()
-		lst_file = QListWidget()
-		lst_file.addItem('Not files yet')
-		lst_file.addItem('Not files yet')
-		lst_file.addItem('Not files yet')
-		lst_dir = QListWidget()
-		lst_dir.addItem('Not dirs yet')
-		lst_dir.addItem('Not dirs yet')
-		lst_dir.addItem('Not dirs yet')
-		tab_files = QTabWidget()
-		tab_files.addTab(lst_file,'Files')
-		tab_files.addTab(lst_dir,'Directories')
+		self.lst_file = QListWidget()
+		self.lst_dir = QListWidget()
+		self.tab_files = QTabWidget()
+		self.tab_files.addTab(self.lst_file,'Files')
+		self.tab_files.addTab(self.lst_dir,'Directories')
 		cLayout_btn = QHBoxLayout()
-		btn_load = QPushButton('Load')
-		btn_info = QPushButton('Info')
-		btn_prev = QPushButton('Preview')
-		cLayout_btn.addWidget(btn_load)
-		cLayout_btn.addWidget(btn_info)
-		cLayout_btn.addWidget(btn_prev)
+		self.btn_load = QPushButton('Load')
+		self.btn_load.setObjectName('Load')
+		self.btn_load.clicked.connect(self.openFileNameDialog)
+		self.btn_info = QPushButton('Info')
+		self.btn_info.setObjectName('Info')
+		self.btn_info.clicked.connect(self.openFileNameDialog)
+		self.btn_prev = QPushButton('Preview')
+		self.btn_prev.setObjectName('Preview')
+		self.btn_prev.clicked.connect(self.openFileNameDialog)
+
+		# get open histories
+		self.filepath = ''
+		if os.path.exists('files_history.txt'):
+			with open('files_history.txt', 'r') as f:
+				files_history = f.read().splitlines()
+			path_history = getPathList(files_history)
+			self.filepath = path_history[0]
+		else:
+			files_history = list()
+			path_history = list()
+		for item in files_history:
+			self.lst_file.addItem(item)
+		for item in path_history:
+			self.lst_dir.addItem(item)
+
+		cLayout_btn.addWidget(self.btn_load)
+		cLayout_btn.addWidget(self.btn_info)
+		cLayout_btn.addWidget(self.btn_prev)
 		lbl_hist = QLabel('Load data files history')
 		cLayout1.addWidget(lbl_hist)
-		cLayout1.addWidget(tab_files)
+		cLayout1.addWidget(self.tab_files)
 		cLayout1.addLayout(cLayout_btn)
 		cFrame1.setLayout(cLayout1)
-
-
 		
 		lbl_obj = QLabel('Loaded objects')
 		b_tree = QTreeView()
@@ -245,7 +262,7 @@ class AnalyzerWidget(QWidget):
 		wLayout.addWidget(wLbl_proc,0,0,1,1)
 		wLayout.addWidget(wComboBox1,1,0,1,1)
 		wLayout.addWidget(wFrame2,2,0,35,1)
-			# Frame 2
+		# Frame 2
 		wLayout2 = QHBoxLayout()
 		wLayout2.addWidget(QPushButton('one'))
 		wLayout2.addWidget(QPushButton('two'))
@@ -311,94 +328,169 @@ class AnalyzerWidget(QWidget):
 		self.setLayout(hbox)
 		QApplication.setStyle(QStyleFactory.create('cleanlooks'))
 
+	def openFileNameDialog(self):
+		# Get adress from tab lists:
+		if self.tab_files.tabText(self.tab_files.currentIndex()) == 'Files':
+			if self.lst_file.currentItem():
+				fileName = self.lst_file.currentItem().text()
+			else:
+				fileName = self.filepath
+		elif self.tab_files.tabText(self.tab_files.currentIndex()) == 'Directories':
+			if self.lst_dir.currentItem():
+				fileName = self.lst_dir.currentItem().text()
+			else:
+				fileName = self.filepath
+		# Check adress and set default dir if it not exist
+		if not os.path.isfile(fileName) and not os.path.isdir(fileName):
+			fileName = self.filepath
+		# Load file 
+		if os.path.isdir(fileName):
+			fileName, _ = QFileDialog.getOpenFileName(self,"Select file for load", directory = fileName)
+
+		print(fileName)
+		# Get and sort history, refresh tab lists:
+		if os.path.isfile(fileName):
+			# create files_history if it is not exits
+			if not os.path.exists('files_history.txt'):
+				with open('files_history.txt', 'w') as out:
+					out.write(fileName+'\n')
+			else:
+				# get all files from history 
+				with open('files_history.txt', 'r') as f:
+					files_history = f.read().splitlines()
+				# check file for exist in history
+				if not fileName in files_history:
+					with open('files_history.txt', 'a') as f:
+						f.write(fileName+'\n')
+				# sort history list by last open file
+				with open('files_history.txt', 'r') as f:
+					files_history = f.read().splitlines()
+				del files_history[files_history.index(fileName)]
+				files_history.insert(0, fileName)
+				with open('files_history.txt','w') as f:
+					for line in files_history:
+						f.write("%s\n" % line)
+			self.lst_file.clear()
+			self.lst_dir.clear()
+			for currFilePath in files_history:
+				self.lst_file.addItem(currFilePath)
+			path_history = getPathList(files_history)
+			for curPath in path_history:
+				self.lst_dir.addItem(curPath)
+
+			# Processing file:
+			# ----------------------------------------------
+			current_button = self.sender()
+			if current_button.objectName() == "Info":
+				try:
+					A = ScanDataFile.scan_file(fileName)
+					ScanDataFile.info(A)
+				except:
+					pass
+			# # -----------------------------------------------
+			if current_button.objectName() == "Preview":
+				try:
+					A = LoadDataFile(fileName)
+					if A.file_format['read']:
+						self.wnd = ViewData(A)
+						self.wnd.initUI()
+						self.wnd.show()
+					else:
+						err = QErrorMessage(self)
+						err.showMessage('Unreadable format of the file.')
+				except:
+					err = QErrorMessage(self)
+					err.showMessage('Can not read this file.')
+
+
 
 
 	def stylesheet_h(self):
-	    return """
-	        QSlider::groove:horizontal {
-	            border: 1px solid #999999;
-	            height: 13px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
-	            background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
-	            margin: 2px 0;
-	        }
+		return """
+			QSlider::groove:horizontal {
+				border: 1px solid #999999;
+				height: 13px; /* the groove expands to the size of the slider by default. by giving it a height, it has a fixed size */
+				background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+				margin: 2px 0;
+			}
 
-	        QSlider::handle:horizontal {
-	            background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
-	            border: 1px solid #5c5c5c;
-	            width: 26px;
-	            margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
-	            border-radius: 3px;
-	        }
-	    """
+			QSlider::handle:horizontal {
+				background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+				border: 1px solid #5c5c5c;
+				width: 26px;
+				margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+				border-radius: 3px;
+			}
+		"""
 
 	def stylesheet_v(self):
-	    return """
-	        QSlider::groove:vertical {
-	            border: 1px solid #999999;
-	            background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
-	            margin: 2px 0;
-	            width: 15px;
-	        }
+		return """
+			QSlider::groove:vertical {
+				border: 1px solid #999999;
+				background: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #B1B1B1, stop:1 #c4c4c4);
+				margin: 2px 0;
+				width: 15px;
+			}
 
-	        QSlider::handle:vertical {
-	            background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
-	            border: 1px solid #5c5c5c;
-	            height: 26px;
-	            margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
-	            border-radius: 3px;
-	        }
-	    """
+			QSlider::handle:vertical {
+				background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #b4b4b4, stop:1 #8f8f8f);
+				border: 1px solid #5c5c5c;
+				height: 26px;
+				margin: -2px 0; /* handle is placed by default on the contents rect of the groove. Expand outside the groove */
+				border-radius: 3px;
+			}
+		"""
 
 	def stylesheet_combo(self):
 		return """
 			QComboBox {
-			     border: 1px solid gray;
-			     border-radius: 3px;
-			     padding: 1px 18px 1px 3px;
-			     min-width: 6em;
+				 border: 1px solid gray;
+				 border-radius: 3px;
+				 padding: 1px 18px 1px 3px;
+				 min-width: 6em;
 			 }
 
 			 QComboBox:editable {
-			     background: white;
+				 background: white;
 			 }
 
 			 QComboBox:!editable, QComboBox::drop-down:editable {
-			      background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-			                                  stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
-			                                  stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
+				  background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+											  stop: 0 #E1E1E1, stop: 0.4 #DDDDDD,
+											  stop: 0.5 #D8D8D8, stop: 1.0 #D3D3D3);
 			 }
 
 			 /* QComboBox gets the "on" state when the popup is open */
 			 QComboBox:!editable:on, QComboBox::drop-down:editable:on {
-			     background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-			                                 stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,
-			                                 stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);
+				 background: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
+											 stop: 0 #D3D3D3, stop: 0.4 #D8D8D8,
+											 stop: 0.5 #DDDDDD, stop: 1.0 #E1E1E1);
 			 }
 
 			 QComboBox:on { /* shift the text when the popup opens */
-			     padding-top: 3px;
-			     padding-left: 4px;
+				 padding-top: 3px;
+				 padding-left: 4px;
 			 }
 
 			 QComboBox::drop-down {
-			     subcontrol-origin: padding;
-			     subcontrol-position: top right;
-			     width: 15px;
+				 subcontrol-origin: padding;
+				 subcontrol-position: top right;
+				 width: 15px;
 
-			     border-left-width: 1px;
-			     border-left-color: darkgray;
-			     border-left-style: solid; /* just a single line */
-			     border-top-right-radius: 3px; /* same radius as the QComboBox */
-			     border-bottom-right-radius: 3px;
+				 border-left-width: 1px;
+				 border-left-color: darkgray;
+				 border-left-style: solid; /* just a single line */
+				 border-top-right-radius: 3px; /* same radius as the QComboBox */
+				 border-bottom-right-radius: 3px;
 			 }
 
 			 QComboBox::down-arrow {
-			     image: url(/usr/share/icons/crystalsvg/16x16/actions/1downarrow.png);
+				 image: url(/usr/share/icons/crystalsvg/16x16/actions/1downarrow.png);
 			 }
 
 			 QComboBox::down-arrow:on { /* shift the arrow when popup is open */
-			     top: 1px;
-			     left: 1px;
+				 top: 1px;
+				 left: 1px;
 			 }
 		"""
 
@@ -425,8 +517,17 @@ class AnalyzerWidget(QWidget):
 			}
 		"""
 
+def OpenFileDialog(st):
+	print(st)
 
-
+def getPathList(files_history):
+	""" Return path_history listh from files_history without repeated."""
+	path_history = list()
+	for item in files_history:
+		curr_path = ntpath.dirname(item)
+		if curr_path not in path_history:
+			path_history.append(curr_path)
+	return path_history
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
