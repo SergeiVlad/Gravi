@@ -1,4 +1,6 @@
 D:/dev/Gravi/test5.txt
+D:/dev/Gravi/test6.txt
+D:/dev/training/test5.txt
 D:/dev/Gravi/test3.txt
 D:/dev/training/test0.txt
 D:/dev/Gravi/info.txt
@@ -29,7 +31,6 @@ D:/dev/Gravi/icon2.png
 D:/dev/Gravi/main.py
 D:/plot.log
 D:/dev/Gravi/LoadDataFile.py
-D:/dev/training/test5.txt
 D:/dev/Gravi/ReadDataFile.py
 D:/dev
 D:/dev/Gravi
